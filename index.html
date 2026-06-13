@@ -532,13 +532,66 @@
   .reply-box .send:hover{ filter:brightness(1.08); transform:translateY(-1px); }
   .reply-box .thanks{ font-family:"Caveat",cursive; color:var(--thread); font-size:1.5rem; margin-top:.8rem; }
 
-  /* gallery filters */
+  /* gallery filters & layout switcher */
   .gallery-filters {
     display: flex;
-    justify-content: center;
-    gap: 0.8rem;
-    margin-bottom: 2rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
     flex-wrap: wrap;
+  }
+  .filter-group {
+    display: flex;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+  }
+  .layout-toggle-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    z-index: 10;
+  }
+  .toggle-label {
+    font-family: "Karla", sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .segmented-control {
+    display: flex;
+    background: rgba(243, 236, 224, 0.05);
+    border: 1px solid rgba(243, 236, 224, 0.1);
+    border-radius: 24px;
+    padding: 2px;
+  }
+  .toggle-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-family: "Karla", sans-serif;
+    font-size: 0.85rem;
+    padding: 0.4rem 1.1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .toggle-btn:hover {
+    color: var(--paper);
+  }
+  .toggle-btn.active {
+    background: var(--lamp);
+    color: var(--pencil);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(255, 215, 154, 0.25);
+  }
+  @media (max-width: 768px) {
+    .gallery-filters {
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
   }
   .filter-btn {
     background: rgba(243, 236, 224, 0.05);
@@ -1209,10 +1262,20 @@
 <div class="written" style="max-width:1000px">
   <div class="sec-head"><p class="eyebrow">every single one</p><h2>Us, in pictures</h2></div>
   <div class="gallery-filters" id="galleryFilters">
-    <button class="filter-btn active" data-filter="all">show all</button>
-    <button class="filter-btn" data-filter="sweet">sweet memories ♡</button>
-    <button class="filter-btn" data-filter="silly">silly snaps 🤪</button>
-    <button class="filter-btn" data-filter="chaotic">absolute chaos 🚨</button>
+    <div class="filter-group">
+      <button class="filter-btn active" data-filter="all">show all</button>
+      <button class="filter-btn" data-filter="sweet">sweet memories ♡</button>
+      <button class="filter-btn" data-filter="silly">silly snaps 🤪</button>
+      <button class="filter-btn" data-filter="chaotic">absolute chaos 🚨</button>
+    </div>
+    
+    <div class="layout-toggle-wrapper">
+      <span class="toggle-label">Layout:</span>
+      <div class="segmented-control" id="layoutToggle">
+        <button class="toggle-btn" data-layout="grid" id="layoutGridBtn">Grid ▦</button>
+        <button class="toggle-btn" data-layout="heart" id="layoutHeartBtn">Heart ♡</button>
+      </div>
+    </div>
   </div>
   <div class="wall" id="wall"></div>
 </div>
@@ -2309,6 +2372,7 @@
   (function(){
     const wall = document.getElementById("wall");
     let activeFilter = "all";
+    let currentGalleryShape = GALLERY_SHAPE;
     let heartLayout;
 
     function renderGallery(isInitial = false) {
@@ -2326,7 +2390,7 @@
       }).join("");
 
       const frames = [...wall.querySelectorAll(".frame")];
-      const heartMode = GALLERY_SHAPE === "heart" && frames.length;
+      const heartMode = currentGalleryShape === "heart" && frames.length;
 
       if (heartMode) {
         wall.classList.add("heart");
@@ -2447,11 +2511,46 @@
       });
     }
 
+    // layout toggle functionality
+    const layoutToggle = document.getElementById("layoutToggle");
+    const gridBtn = document.getElementById("layoutGridBtn");
+    const heartBtn = document.getElementById("layoutHeartBtn");
+    
+    if (layoutToggle && gridBtn && heartBtn) {
+      // Set initial active state based on currentGalleryShape
+      if (currentGalleryShape === "heart") {
+        heartBtn.classList.add("active");
+      } else {
+        gridBtn.classList.add("active");
+      }
+      
+      gridBtn.addEventListener("click", () => {
+        if (currentGalleryShape === "grid") return;
+        currentGalleryShape = "grid";
+        heartBtn.classList.remove("active");
+        gridBtn.classList.add("active");
+        renderGallery();
+      });
+      
+      heartBtn.addEventListener("click", () => {
+        if (currentGalleryShape === "heart") return;
+        currentGalleryShape = "heart";
+        gridBtn.classList.remove("active");
+        heartBtn.classList.add("active");
+        renderGallery();
+        
+        // Force immediate layout calculations
+        if (typeof heartLayout === "function") {
+          heartLayout();
+        }
+      });
+    }
+
     // initial render
     renderGallery(true);
 
-    window.addEventListener("load", () => { if(GALLERY_SHAPE === "heart") heartLayout(); });
-    window.addEventListener("resize", () => { if(GALLERY_SHAPE === "heart") heartLayout(); });
+    window.addEventListener("load", () => { if(currentGalleryShape === "heart") heartLayout(); });
+    window.addEventListener("resize", () => { if(currentGalleryShape === "heart") heartLayout(); });
 
     document.getElementById("lbNext").onclick = next;
     document.getElementById("lbPrev").onclick = prev;

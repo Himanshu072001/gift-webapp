@@ -638,7 +638,7 @@
     justify-content:center; color:#8a7f6d; font-size:.8rem; text-align:center; border-radius:2px; }
 
   /* heart-shaped arrangement */
-  .wall.heart{ position:relative; max-width:560px; margin:0 auto; min-height:320px;
+  .wall.heart{ position:relative; width:100%; max-width:560px; margin:0 auto; min-height:320px;
     transform-origin:center; animation:heartThrob 3.4s ease-in-out infinite;
     column-count:auto !important; column-gap:0 !important; }
   .wall.heart .frame{ position:absolute; margin:0; padding:5px 5px 6px; }
@@ -2441,9 +2441,16 @@
 
     // arrange into a heart (optional)
     heartLayout = ()=>{
+      if (currentGalleryShape !== "heart") return;
       const frames = [...wall.querySelectorAll(".frame")];
-      const W = Math.min(wall.clientWidth || wall.offsetWidth || 0, 560);
-      if(W < 60){ requestAnimationFrame(heartLayout); return; }   // wait for real width
+      const parentW = wall.parentElement ? wall.parentElement.clientWidth : 0;
+      const W = Math.min(parentW || wall.clientWidth || wall.offsetWidth || 0, 560);
+      if(W < 60){
+        if (currentGalleryShape === "heart") {
+          requestAnimationFrame(heartLayout);
+        }
+        return;
+      }   // wait for real width
       const N = frames.length;
       if (N === 0) return;
       const pts = [];

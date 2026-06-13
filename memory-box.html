@@ -1253,25 +1253,47 @@
     state[i].el = el;
   });
 
+  // re-layout when images load to ensure correct heights are measured
+  desk.querySelectorAll(".pic").forEach(img => {
+    if (img.tagName === "IMG") {
+      if (img.complete) {
+        layout();
+      } else {
+        img.addEventListener("load", layout);
+      }
+    }
+  });
+
   function layout(){
     const w = desk.clientWidth;
     const narrow = w < 700;
     const cardW = state[0].el.offsetWidth || (narrow?150:210);
-    const cardH = state[0].el.offsetHeight || 240;
+    const cardH = state[0].el.offsetHeight || (narrow ? 200 : 280);
     const padX = narrow ? 12 : Math.max(24, w*0.04);
     const stepY = cardH + (narrow ? 34 : 56);   // full card height + gap -> no overlap
     const usable = w - cardW - padX*2;
 
     state.forEach((s,i)=>{
       if(s.moved) return;             // keep where the user dragged it
-      const lane = i % 2;             // gentle zig-zag
-      const swing = narrow ? usable*0.5 : usable*0.6;
-      const base = lane===0 ? padX : padX + (usable - swing);
-      s.x = base + s.jx*swing;
-      s.y = 60 + i*stepY + (s.jy*12 - 6);   // tiny jitter, well within the gap
+      const lane = i % 2;             // alternating left and right lanes
+      
+      if (narrow) {
+        // Mobile layout: simple zig-zag with half the usable space swing
+        const swing = usable * 0.5;
+        const base = lane === 0 ? padX : padX + (usable - swing);
+        s.x = base + s.jx * swing;
+      } else {
+        // Desktop layout: strict left/right column bounds (no crossing)
+        const colWidth = usable * 0.35;
+        const base = lane === 0 ? padX : padX + usable - colWidth;
+        const colJitter = s.jx * (usable * 0.15); // safe random horizontal offset inside column
+        s.x = base + colJitter;
+      }
+      
+      s.y = 60 + i*stepY + (s.jy*12 - 6);   // tiny vertical jitter
       apply(s);
     });
-    const maxY = Math.max(...state.map(s=>s.y)) + cardH + 60;
+    const maxY = Math.max(...state.map(s=>s.y)) + cardH + 120; // spacious bottom padding
     desk.style.height = maxY + "px";
     svg.setAttribute("viewBox", `0 0 ${w} ${maxY}`);
     svg.style.height = maxY + "px";

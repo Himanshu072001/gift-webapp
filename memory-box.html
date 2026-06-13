@@ -878,13 +878,15 @@
 
   const HER_NAME = "Her Name";
 
+  // moments[] - draggable Polaroids: { date, title, note, img, position }
+  //   position: optional CSS object-position for cropping alignment (e.g., "top", "center", "bottom", "50% 20%")
   const moments = [
     { date: "Aug 2024", title: "The day we met", note: "Where it all began — you had that beautiful smile and I was so nervous.", img: "photos/01.webp" },
     { date: "Oct 2024", title: "Somewhere new, together", note: "Our first trip out of town. Remember how we got lost but laughed it off?", img: "photos/02.webp" },
     { date: "Dec 2024", title: "Laughing till it hurt", note: "That cozy late night when we stayed up talking about everything and nothing.", img: "photos/03.webp" },
     { date: "Jan 2025", title: "Nothing special, everything special", note: "A simple lazy Sunday making breakfast and dancing in the kitchen.", img: "photos/04.webp" },
     { date: "Apr 2025", title: "Right here, right now", note: "Every single day with you is my favourite new memory. I love you.", img: "photos/06.webp" },
-    { date: "always", title: "Holding hands", note: "Here's to a lifetime of adventures and holding hands wherever we go.", img: "photos/12.webp" }
+    { date: "always", title: "Holding hands", note: "Here's to a lifetime of adventures and holding hands wherever we go.", img: "photos/12.webp", position: "top" }
   ];
 
   // a longer letter — each "…" string is its own paragraph
@@ -1242,8 +1244,9 @@
     const el = document.createElement("div");
     el.className = "polaroid";
     el.dataset.i = i;
+    const styleAttr = m.position ? ` style="object-position: ${m.position}"` : '';
     const pic = m.img
-      ? `<img class="pic" src="${m.img}" alt="${m.title}" draggable="false">`
+      ? `<img class="pic" src="${m.img}" alt="${m.title}" draggable="false"${styleAttr}>`
       : `<div class="pic empty">add a photo<br><small>img:&nbsp;"photos/…"</small></div>`;
     el.innerHTML = pic + `<div class="cap">${m.title}</div>`;
     desk.appendChild(el);
@@ -1341,8 +1344,9 @@
   // ---- open lifted card ----
   function open(i){
     const m = moments[i];
+    const styleAttr = m.position ? ` style="object-position: ${m.position}"` : '';
     const pic = m.img
-      ? `<img class="pic" src="${m.img}" alt="${m.title}">`
+      ? `<img class="pic" src="${m.img}" alt="${m.title}"${styleAttr}>`
       : `<div class="pic empty">add a photo</div>`;
     card.innerHTML = pic +
       `<p class="date">${m.date}</p><h3>${m.title}</h3><p>${m.note}</p>

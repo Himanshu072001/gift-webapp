@@ -18,7 +18,7 @@ All personalization is driven by these constants near the top of the `<script>`:
 |---|---|
 | `BIRTHDAY_DATE` | Target date for countdown timer (format: "YYYY-MM-DD"). Memory Box unlocks at midnight on this date. |
 | `HER_NAME` | Shown in the hero and `<title>`; auto-substituted into the letter's `[Her Name]`. |
-| `moments[]` | Desk Polaroids: `{ date, title, note, img }`. |
+| `moments[]` | Desk Polaroids: `{ date, title, note, img, position }` (position optional: e.g., "top", "center", "bottom"). |
 | `LETTER` | `{ dear, body:[paragraphs], sign }`. |
 | `loves[]` | Sticky-note strings. |
 | `wishes[]` | Wishes-list strings. |

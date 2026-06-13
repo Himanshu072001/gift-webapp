@@ -639,7 +639,8 @@
 
   /* heart-shaped arrangement */
   .wall.heart{ position:relative; max-width:560px; margin:0 auto; min-height:320px;
-    transform-origin:center; animation:heartThrob 3.4s ease-in-out infinite; }
+    transform-origin:center; animation:heartThrob 3.4s ease-in-out infinite;
+    column-count:auto !important; column-gap:0 !important; }
   .wall.heart .frame{ position:absolute; margin:0; padding:5px 5px 6px; }
   .wall.heart .frame img{ aspect-ratio:1/1; object-fit:cover; }
   .wall.heart .frame .empty{ aspect-ratio:1/1; }
@@ -2394,9 +2395,15 @@
 
       if (heartMode) {
         wall.classList.add("heart");
-        heartLayout();
+        // Force calculation after browser reflow
+        requestAnimationFrame(() => {
+          if (currentGalleryShape === "heart") {
+            heartLayout();
+          }
+        });
       } else {
         wall.classList.remove("heart");
+        wall.style.height = ""; // Reset fixed height from heart layout
         // Reset absolute layouts from heart mode
         frames.forEach(f => {
           f.style.width = "";

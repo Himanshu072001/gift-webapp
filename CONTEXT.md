@@ -15,17 +15,23 @@ It is **one file**: `memory-box.html`. No build step, no dependencies to install
 
 Fully working and populated with **sample content** (illustrated placeholder images generated inside the file, a complete sample letter, sample captions). It previews correctly with zero setup. The giver replaces the samples with real photos and words.
 
-## Page flow (top to bottom)
+## Page flow (complete experience)
 
-1. **Hero** — "happy birthday" + her name + intro line.
-2. **The desk** — draggable Polaroid photos scattered on a dark desk, connected by a red "thread of fate." Tap a photo to lift it and read the memory.
-3. **Things I love about you** — sticky notes.
-4. **This year, I hope we…** — wishes for the year ahead.
-5. **Our inside jokes** — kraft-paper slips.
-6. **Us, in pictures** — every photo shown as a framed print on a wall. Tap any photo to open a full-screen viewer with previous/next arrows (and keyboard ← / →) and a soft cross-fade between images. The arrangement defaults to a tidy grid; an optional heart layout is available via a switch.
-7. **An open letter** — a longer written message on a taped sheet of paper.
-8. **Write me back** — a reply box; her message opens a prefilled email or WhatsApp addressed to the giver.
-9. **Finale** — a beating heart seal + closing line.
+### **Pre-Memory Box Experience:**
+1. **Countdown Timer** — shows days, hours, minutes, seconds until her birthday at midnight. Includes floating hearts animation and "skip countdown →" button for testing.
+2. **Transition Page** — appears when countdown ends with "Happy Birthday!" message and "Let's reminisce ♡" button to start the quiz.
+3. **Romantic Quiz** — 5 interactive memory-based questions with multiple choice answers. Each correct answer reveals a sweet memory note. Includes navigation between questions.
+
+### **Main Memory Box (after quiz completion):**
+4. **Hero** — "happy birthday" + her name + intro line.
+5. **The desk** — draggable Polaroid photos scattered on a dark desk, connected by a red "thread of fate." Tap a photo to lift it and read the memory.
+6. **Things I love about you** — sticky notes.
+7. **This year, I hope we…** — wishes for the year ahead.
+8. **Our inside jokes** — kraft-paper slips.
+9. **Us, in pictures** — every photo shown as a framed print on a wall. Tap any photo to open a full-screen viewer with previous/next arrows (and keyboard ← / →) and a soft cross-fade between images. The arrangement defaults to a tidy grid; an optional heart layout is available via a switch.
+10. **An open letter** — a longer written message on a taped sheet of paper.
+11. **Write me back** — a reply box; her message opens a prefilled email or WhatsApp addressed to the giver.
+12. **Finale** — a beating heart seal + closing line.
 
 > Note: an earlier "Songs that remind me of you" playlist section and the gallery slideshow/auto-play "screensaver" have been removed. The gallery is now a simple framed wall with tap-to-enlarge.
 

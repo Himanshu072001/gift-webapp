@@ -368,8 +368,306 @@
     .written, .finale{ opacity:1; transform:none; }
     .frame{ opacity:1; transform:none; }
     .hearts, .lamp{ display:none; }
+    .countdown-hearts{ display:none; }
+    .transition-page.show{ opacity:1; }
+    .quiz-page.show{ opacity:1; }
+    .quiz-memory.show{ opacity:1; transform:none; }
+  }
+
+  /* ---------- countdown page ---------- */
+  .countdown-page{
+    position:fixed; inset:0; z-index:100;
+    background:
+      radial-gradient(900px 600px at 50% 30%, rgba(255,215,154,.16), transparent 60%),
+      radial-gradient(1400px 900px at 50% 0%, #24222e 0%, transparent 55%),
+      linear-gradient(180deg,var(--ink-2),var(--ink));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:2rem;
+  }
+  .countdown-page.hidden{ display:none; }
+  .countdown-intro{
+    margin-bottom:3rem;
+  }
+  .countdown-intro .eyebrow{
+    font-family:"Caveat",cursive; color:var(--thread-glow);
+    font-size:1.6rem; margin-bottom:.5rem;
+  }
+  .countdown-intro h1{
+    font-family:"Fraunces",serif; font-weight:400;
+    font-size:clamp(2rem,6vw,3.5rem); line-height:1.1;
+    background:linear-gradient(180deg,#fff6ea,var(--lamp));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    margin-bottom:1rem;
+  }
+  .countdown-intro p{
+    color:var(--muted); font-size:1.1rem; max-width:40ch; margin:0 auto;
+  }
+  .countdown-display{
+    display:flex; gap:1.5rem; justify-content:center; margin-bottom:2rem;
+  }
+  .countdown-unit{
+    background:rgba(243,236,224,.08); border:1px solid rgba(243,236,224,.12);
+    border-radius:8px; padding:1.5rem 1rem; min-width:100px;
+    backdrop-filter:blur(4px);
+  }
+  .countdown-number{
+    font-family:"Fraunces",serif; font-weight:500;
+    font-size:clamp(2.5rem,8vw,4rem); line-height:1;
+    background:linear-gradient(180deg,var(--lamp),#fff6ea);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    display:block;
+  }
+  .countdown-label{
+    font-family:"Caveat",cursive; color:var(--thread-glow);
+    font-size:1.2rem; margin-top:.3rem;
+  }
+  .countdown-message{
+    font-family:"Caveat",cursive; color:var(--thread);
+    font-size:1.8rem; max-width:32ch; line-height:1.3;
+  }
+  .countdown-hearts{
+    position:absolute; width:100px; height:100px; top:20%; right:15%;
+    animation:floatGently 6s ease-in-out infinite;
+  }
+  .countdown-hearts::before, .countdown-hearts::after{
+    content:"♡"; position:absolute; color:var(--thread-glow);
+    font-size:1.5rem; opacity:.4;
+  }
+  .countdown-hearts::before{ top:0; left:0; animation:pulse 3s ease-in-out infinite; }
+  .countdown-hearts::after{ bottom:0; right:0; font-size:1.2rem; animation:pulse 3s ease-in-out infinite .5s; }
+  @keyframes floatGently{
+    0%,100%{ transform:translateY(0) rotate(2deg); }
+    50%{ transform:translateY(-12px) rotate(-2deg); }
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:.3; transform:scale(1); }
+    50%{ opacity:.6; transform:scale(1.1); }
+  }
+  @media (max-width:600px){
+    .countdown-display{ gap:1rem; }
+    .countdown-unit{ padding:1rem .7rem; min-width:80px; }
+  }
+  .countdown-skip{
+    position:absolute; top:2rem; right:2rem; z-index:10;
+    background:rgba(197,54,43,.1); border:1px solid rgba(197,54,43,.3);
+    color:var(--thread); padding:.6rem 1.2rem; border-radius:999px;
+    font-family:"Karla",sans-serif; font-size:.9rem; cursor:pointer;
+    transition:all .2s ease; backdrop-filter:blur(4px);
+  }
+  .countdown-skip:hover{
+    background:rgba(197,54,43,.2); border-color:var(--thread);
+    transform:translateY(-1px);
+  }
+  @media (max-width:600px){
+    .countdown-skip{ top:1rem; right:1rem; padding:.5rem 1rem; font-size:.85rem; }
+  }
+
+  /* ---------- transition page ---------- */
+  .transition-page{
+    position:fixed; inset:0; z-index:90;
+    background:
+      radial-gradient(900px 600px at 50% 30%, rgba(255,215,154,.16), transparent 60%),
+      radial-gradient(1400px 900px at 50% 0%, #24222e 0%, transparent 55%),
+      linear-gradient(180deg,var(--ink-2),var(--ink));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:2rem; opacity:0; pointer-events:none;
+    transition:opacity .8s ease;
+  }
+  .transition-page.show{ opacity:1; pointer-events:auto; }
+  .transition-page.hidden{ display:none; }
+  .transition-content h1{
+    font-family:"Fraunces",serif; font-weight:400;
+    font-size:clamp(2.2rem,7vw,4rem); line-height:1.1; margin-bottom:1.5rem;
+    background:linear-gradient(180deg,#fff6ea,var(--lamp));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .transition-content p{
+    color:var(--muted); font-size:1.2rem; max-width:45ch; margin:0 auto 2.5rem;
+    line-height:1.5;
+  }
+  .transition-btn{
+    background:var(--thread); color:#fff2ec; border:none; border-radius:999px;
+    font-family:"Karla",sans-serif; font-weight:500; font-size:1.1rem;
+    padding:1rem 2.5rem; cursor:pointer; transition:all .25s ease;
+    box-shadow:0 8px 24px rgba(197,54,43,.3);
+  }
+  .transition-btn:hover{
+    background:var(--thread-glow); transform:translateY(-2px);
+    box-shadow:0 12px 32px rgba(197,54,43,.4);
+  }
+
+  /* ---------- quiz page ---------- */
+  .quiz-page{
+    position:fixed; inset:0; z-index:80;
+    background:
+      radial-gradient(900px 600px at 50% 30%, rgba(255,215,154,.16), transparent 60%),
+      radial-gradient(1400px 900px at 50% 0%, #24222e 0%, transparent 55%),
+      linear-gradient(180deg,var(--ink-2),var(--ink));
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:2rem; opacity:0; pointer-events:none; transition:opacity .8s ease;
+    overflow-y:auto;
+  }
+  .quiz-page.show{ opacity:1; pointer-events:auto; }
+  .quiz-page.hidden{ display:none; }
+  .quiz-container{
+    background:rgba(243,236,224,.08); border:1px solid rgba(243,236,224,.12);
+    border-radius:12px; padding:2.5rem; max-width:600px; width:100%;
+    backdrop-filter:blur(8px); box-shadow:0 24px 60px rgba(0,0,0,.4);
+  }
+  .quiz-header{
+    text-align:center; margin-bottom:2rem;
+  }
+  .quiz-header .eyebrow{
+    font-family:"Caveat",cursive; color:var(--thread-glow);
+    font-size:1.4rem; margin-bottom:.5rem;
+  }
+  .quiz-header h2{
+    font-family:"Fraunces",serif; font-weight:400;
+    font-size:clamp(1.8rem,5vw,2.6rem); line-height:1.1; margin-bottom:1rem;
+    background:linear-gradient(180deg,#fff6ea,var(--lamp));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .quiz-progress{
+    color:var(--muted); font-size:.95rem; margin-bottom:1.5rem;
+  }
+  .quiz-question{
+    margin-bottom:2rem;
+  }
+  .quiz-question h3{
+    font-family:"Karla",sans-serif; color:var(--paper); font-size:1.3rem;
+    line-height:1.4; margin-bottom:1.5rem; font-weight:400;
+  }
+  .quiz-options{
+    display:grid; gap:1rem;
+  }
+  .quiz-option{
+    background:rgba(243,236,224,.05); border:2px solid rgba(243,236,224,.1);
+    border-radius:8px; padding:1rem 1.2rem; cursor:pointer; transition:all .2s ease;
+    color:var(--paper); font-family:"Karla",sans-serif; font-size:1rem;
+    text-align:left;
+  }
+  .quiz-option:hover{
+    background:rgba(243,236,224,.1); border-color:rgba(243,236,224,.2);
+    transform:translateY(-1px);
+  }
+  .quiz-option.selected{
+    background:rgba(197,54,43,.15); border-color:var(--thread);
+    color:var(--thread-glow);
+  }
+  .quiz-option.correct{
+    background:rgba(167,216,201,.2); border-color:#5b8c85;
+    color:#a7d8c9;
+  }
+  .quiz-option.wrong{
+    background:rgba(197,54,43,.15); border-color:var(--thread);
+    color:var(--muted);
+  }
+  .quiz-memory{
+    background:var(--paper); color:var(--pencil); border-radius:8px;
+    padding:1.5rem; margin:1.5rem 0; font-family:"Caveat",cursive;
+    font-size:1.4rem; line-height:1.3; text-align:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.2); opacity:0; transform:translateY(10px);
+    transition:all .5s ease;
+  }
+  .quiz-memory.show{
+    opacity:1; transform:translateY(0);
+  }
+  .quiz-nav{
+    display:flex; justify-content:space-between; margin-top:2rem;
+  }
+  .quiz-btn{
+    background:var(--thread); color:#fff2ec; border:none; border-radius:999px;
+    font-family:"Karla",sans-serif; font-weight:500; font-size:1rem;
+    padding:.8rem 1.8rem; cursor:pointer; transition:all .2s ease;
+  }
+  .quiz-btn:hover{
+    background:var(--thread-glow); transform:translateY(-1px);
+  }
+  .quiz-btn:disabled{
+    background:var(--muted); cursor:not-allowed; transform:none;
+  }
+  .quiz-btn.secondary{
+    background:transparent; color:var(--muted); border:1px solid rgba(155,148,163,.3);
+  }
+  .quiz-btn.secondary:hover{
+    color:var(--paper); border-color:var(--paper);
+  }
+  .quiz-complete{
+    text-align:center;
+  }
+  .quiz-complete h3{
+    font-family:"Fraunces",serif; color:var(--lamp); font-size:2rem;
+    margin-bottom:1rem;
+  }
+  .quiz-complete p{
+    color:var(--paper); font-size:1.1rem; line-height:1.5; margin-bottom:2rem;
+  }
+  @media (max-width:700px){
+    .quiz-container{ padding:1.8rem 1.5rem; }
+    .quiz-nav{ flex-direction:column; gap:1rem; }
   }
 </style>
+
+<!-- countdown page (hidden after target time) -->
+<div class="countdown-page" id="countdownPage">
+  <button class="countdown-skip" id="skipCountdown">skip countdown →</button>
+  <div class="countdown-hearts"></div>
+  <div class="countdown-intro">
+    <p class="eyebrow">something special is waiting</p>
+    <h1>Your Memory Box</h1>
+    <p>opens when the clock strikes midnight on your birthday</p>
+  </div>
+  <div class="countdown-display" id="countdownDisplay">
+    <div class="countdown-unit">
+      <span class="countdown-number" id="days">00</span>
+      <div class="countdown-label">days</div>
+    </div>
+    <div class="countdown-unit">
+      <span class="countdown-number" id="hours">00</span>
+      <div class="countdown-label">hours</div>
+    </div>
+    <div class="countdown-unit">
+      <span class="countdown-number" id="minutes">00</span>
+      <div class="countdown-label">minutes</div>
+    </div>
+    <div class="countdown-unit">
+      <span class="countdown-number" id="seconds">00</span>
+      <div class="countdown-label">seconds</div>
+    </div>
+  </div>
+  <p class="countdown-message">every second brings us closer to celebrating you ♡</p>
+</div>
+
+<!-- transition page after countdown -->
+<div class="transition-page" id="transitionPage">
+  <div class="transition-content">
+    <h1>Happy Birthday!</h1>
+    <p>Your special day has arrived! Before we open your Memory Box, let's take a little trip down memory lane together...</p>
+    <button class="transition-btn" id="startQuiz">Let's reminisce ♡</button>
+  </div>
+</div>
+
+<!-- quiz page -->
+<div class="quiz-page" id="quizPage">
+  <div class="quiz-container">
+    <div class="quiz-header">
+      <p class="eyebrow">a little game for us</p>
+      <h2>How well do you remember us?</h2>
+      <div class="quiz-progress">Question <span id="currentQ">1</span> of <span id="totalQ">5</span></div>
+    </div>
+    
+    <div class="quiz-question" id="questionContainer">
+      <h3 id="questionText">Loading...</h3>
+      <div class="quiz-options" id="optionsContainer"></div>
+      <div class="quiz-memory" id="memoryNote"></div>
+    </div>
+    
+    <div class="quiz-nav">
+      <button class="quiz-btn secondary" id="quizPrev" disabled>Previous</button>
+      <button class="quiz-btn" id="quizNext" disabled>Next</button>
+    </div>
+  </div>
+</div>
 
 <div class="lamp"></div>
 <div class="hearts" id="hearts"></div>
@@ -480,6 +778,11 @@
 
   /* ================= EDIT THIS ================= */
 
+  // countdown target: when the main page unlocks (midnight on 27th)
+  // format: "YYYY-MM-DD" - will unlock at 12:00 AM (midnight) on this date
+  // FOR TESTING: set to 10 seconds from now
+  const BIRTHDAY_DATE = new Date(Date.now() + 10000).toISOString().split('T')[0];
+
   const HER_NAME = "Her Name";
 
   const moments = [
@@ -561,7 +864,210 @@
   //   method:"whatsapp" -> set "to" to your number with country code, no + (e.g. "919876543210")
   const REPLY_TO = { method:"email", to:"you@example.com" };
 
+  // quiz questions about your memories together
+  // each question has: question, options (4 choices), correct (0-3 index), memory (sweet note when correct)
+  const quizQuestions = [
+    {
+      question: "Where did we have our first date?",
+      options: ["The coffee shop downtown", "That little restaurant", "The park by the lake", "Your place"],
+      correct: 0,
+      memory: "I was so nervous, but you made me feel at ease instantly ♡"
+    },
+    {
+      question: "What's the song that always reminds me of you?",
+      options: ["Perfect by Ed Sheeran", "All of Me", "Our song from that night", "The one you hummed"],
+      correct: 2,
+      memory: "Every time I hear it, I'm back to that perfect moment with you"
+    },
+    {
+      question: "What's your favorite thing I do that makes you laugh?",
+      options: ["My terrible jokes", "The way I dance in the kitchen", "When I sing off-key", "My sleepy voice"],
+      correct: 1,
+      memory: "Your laugh is my favorite sound in the world"
+    },
+    {
+      question: "What did we do on our best lazy Sunday?",
+      options: ["Watched movies all day", "Cooked breakfast together", "Never left the bed", "All of the above"],
+      correct: 3,
+      memory: "Those are the days I treasure most - just us, no rush, pure happiness"
+    },
+    {
+      question: "What's the little thing I do that shows I love you?",
+      options: ["Leave you sweet notes", "Remember how you like your coffee", "Hold your hand everywhere", "All of these"],
+      correct: 3,
+      memory: "It's in every small moment - that's where our love lives"
+    }
+  ];
+
   /* =============== you can stop editing here =============== */
+
+  // countdown logic - show countdown until birthday, then show main page
+  // FOR TESTING: 10 seconds from page load
+  const targetDate = Date.now() + 10000;
+  const countdownPage = document.getElementById("countdownPage");
+  const mainContent = document.querySelector("body");
+  
+  function updateCountdown(){
+    const now = new Date().getTime();
+    const distance = targetDate - now;
+    
+    if(distance < 0){
+      // birthday time reached - show transition page instead of main page
+      countdownPage.classList.add("hidden");
+      setTimeout(() => {
+        document.getElementById("transitionPage").classList.add("show");
+      }, 500);
+      return;
+    }
+    
+    // calculate time remaining
+    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+    // update display
+    document.getElementById("days").textContent = String(days).padStart(2, "0");
+    document.getElementById("hours").textContent = String(hours).padStart(2, "0");
+    document.getElementById("minutes").textContent = String(minutes).padStart(2, "0");
+    document.getElementById("seconds").textContent = String(seconds).padStart(2, "0");
+  }
+  
+  // check countdown every second
+  updateCountdown();
+  const countdownInterval = setInterval(updateCountdown, 1000);
+  
+  // if we're past the target date, show transition page immediately
+  if(new Date().getTime() >= targetDate){
+    countdownPage.classList.add("hidden");
+    clearInterval(countdownInterval);
+    setTimeout(() => {
+      document.getElementById("transitionPage").classList.add("show");
+    }, 500);
+  }
+  
+  // skip button functionality - show transition page
+  document.getElementById("skipCountdown").addEventListener("click", function(){
+    countdownPage.classList.add("hidden");
+    clearInterval(countdownInterval);
+    setTimeout(() => {
+      document.getElementById("transitionPage").classList.add("show");
+    }, 500);
+  });
+
+  // quiz functionality
+  let currentQuestion = 0;
+  let userAnswers = [];
+  const transitionPage = document.getElementById("transitionPage");
+  const quizPage = document.getElementById("quizPage");
+  
+  // start quiz button
+  document.getElementById("startQuiz").addEventListener("click", function(){
+    transitionPage.classList.remove("show");
+    setTimeout(() => {
+      transitionPage.classList.add("hidden");
+      quizPage.classList.add("show");
+      initQuiz();
+    }, 300);
+  });
+  
+  function initQuiz(){
+    currentQuestion = 0;
+    userAnswers = [];
+    document.getElementById("totalQ").textContent = quizQuestions.length;
+    showQuestion();
+  }
+  
+  function showQuestion(){
+    const q = quizQuestions[currentQuestion];
+    document.getElementById("currentQ").textContent = currentQuestion + 1;
+    document.getElementById("questionText").textContent = q.question;
+    
+    const optionsContainer = document.getElementById("optionsContainer");
+    optionsContainer.innerHTML = "";
+    
+    q.options.forEach((option, index) => {
+      const btn = document.createElement("div");
+      btn.className = "quiz-option";
+      btn.textContent = option;
+      btn.dataset.index = index;
+      
+      btn.addEventListener("click", function(){
+        // remove previous selections
+        optionsContainer.querySelectorAll(".quiz-option").forEach(opt => {
+          opt.classList.remove("selected", "correct", "wrong");
+        });
+        
+        // mark selection
+        btn.classList.add("selected");
+        userAnswers[currentQuestion] = index;
+        
+        // show correct/wrong after delay
+        setTimeout(() => {
+          optionsContainer.querySelectorAll(".quiz-option").forEach((opt, i) => {
+            if(i === q.correct){
+              opt.classList.add("correct");
+            } else if(opt.classList.contains("selected") && i !== q.correct){
+              opt.classList.add("wrong");
+            }
+          });
+          
+          // show memory note
+          showMemory(q.memory);
+          
+          // enable next button
+          document.getElementById("quizNext").disabled = false;
+        }, 800);
+      });
+      
+      optionsContainer.appendChild(btn);
+    });
+    
+    // hide memory note
+    document.getElementById("memoryNote").classList.remove("show");
+    
+    // update navigation
+    document.getElementById("quizPrev").disabled = currentQuestion === 0;
+    document.getElementById("quizNext").disabled = true;
+    
+    if(currentQuestion === quizQuestions.length - 1){
+      document.getElementById("quizNext").textContent = "Finish Quiz";
+    } else {
+      document.getElementById("quizNext").textContent = "Next";
+    }
+  }
+  
+  function showMemory(memory){
+    const memoryNote = document.getElementById("memoryNote");
+    memoryNote.textContent = memory;
+    memoryNote.classList.add("show");
+  }
+  
+  // quiz navigation
+  document.getElementById("quizPrev").addEventListener("click", function(){
+    if(currentQuestion > 0){
+      currentQuestion--;
+      showQuestion();
+    }
+  });
+  
+  document.getElementById("quizNext").addEventListener("click", function(){
+    if(currentQuestion < quizQuestions.length - 1){
+      currentQuestion++;
+      showQuestion();
+    } else {
+      // quiz complete - show main memory box
+      completeQuiz();
+    }
+  });
+  
+  function completeQuiz(){
+    quizPage.classList.remove("show");
+    setTimeout(() => {
+      quizPage.classList.add("hidden");
+      // show main memory box content by removing all overlay pages
+    }, 500);
+  }
 
   document.getElementById("name").textContent = HER_NAME;
   document.title = HER_NAME + " — The Memory Box";

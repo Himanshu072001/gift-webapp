@@ -16,6 +16,7 @@ All personalization is driven by these constants near the top of the `<script>`:
 
 | Constant | Purpose |
 |---|---|
+| `BIRTHDAY_DATE` | Target date for countdown timer (format: "YYYY-MM-DD"). Memory Box unlocks at midnight on this date. |
 | `HER_NAME` | Shown in the hero and `<title>`; auto-substituted into the letter's `[Her Name]`. |
 | `moments[]` | Desk Polaroids: `{ date, title, note, img }`. |
 | `LETTER` | `{ dear, body:[paragraphs], sign }`. |
@@ -24,6 +25,7 @@ All personalization is driven by these constants near the top of the `<script>`:
 | `jokes[]` | Inside-joke strings. |
 | `gallery[]` | `{ img, caption }`; caption optional. |
 | `GALLERY_SHAPE` | `"grid"` (framed wall, default) or `"heart"`. |
+| `quizQuestions[]` | Quiz questions: `{ question, options:[4 choices], correct:index, memory:"sweet note" }`. |
 | `REPLY_TO` | `{ method:"email"|"whatsapp", to }`. |
 
 `sampleImg(i)` (defined above the edit block) generates the inline placeholder images. It is preview-only — never depend on it for real output, and don't remove it unless the user has replaced every `sampleImg(...)` reference.
@@ -59,6 +61,16 @@ There's no test suite. After editing:
 2. Confirm the edit block still parses (balanced brackets/quotes) — a stray quote breaks the whole page silently.
 3. Spot-check that new motion has a reduced-motion fallback and uses tokens.
 4. Re-present the file to the user.
+
+## The countdown and quiz flow
+
+The experience now includes a three-stage pre-Memory Box flow:
+1. **Countdown Timer** - shows until `BIRTHDAY_DATE` at midnight. Includes skip button for testing.
+2. **Transition Page** - birthday greeting with button to start quiz.
+3. **Romantic Quiz** - interactive questions from `quizQuestions[]` with memory reveals.
+4. **Main Memory Box** - original gift experience begins.
+
+The countdown, transition, and quiz pages use fixed positioning (`z-index: 100, 90, 80`) and hide/show via opacity transitions. All respect `prefers-reduced-motion`.
 
 ## When adding a section
 

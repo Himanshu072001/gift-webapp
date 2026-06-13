@@ -642,6 +642,28 @@
     color: var(--thread-glow);
   }
 
+  /* Confetti particle celebration animation */
+  .confetti-particle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    will-change: transform, opacity;
+  }
+  @keyframes confetti-fall {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(0);
+      opacity: 1;
+    }
+    10% {
+      opacity: 1;
+      transform: translate(var(--x1), var(--y1)) rotate(var(--r1)) scale(1.2);
+    }
+    100% {
+      transform: translate(var(--x2), var(--y2)) rotate(var(--r2)) scale(0.6);
+      opacity: 0;
+    }
+  }
+
   /* ---------- quiz page ---------- */
   .quiz-page{
     position:fixed; inset:0; z-index:80;
@@ -1337,6 +1359,67 @@
     showQuestion();
   }
   
+  function triggerCelebration(originX, originY) {
+    if (reduce) return;
+    
+    const colors = ["#ffd79a", "#f3ece0", "#c5362b", "#e8584b", "#f7b9a8", "#bfe0c4", "#bcd3f0"];
+    const shapes = [
+      // Heart SVG
+      `<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
+      // Star SVG
+      `<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 2L14.8 8.6L22 9.2L16.5 14L18.2 21L12 17.3L5.8 21L7.5 14L2 9.2L9.2 8.6L12 2Z"/></svg>`,
+      // Sparkle SVG
+      `<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 3a9 9 0 0 0 9 9 9 9 0 0 0-9 9 9 9 0 0 0-9-9 9 9 0 0 0 9-9z"/></svg>`
+    ];
+
+    const particleCount = 45;
+    const container = document.body;
+
+    for (let i = 0; i < particleCount; i++) {
+      const p = document.createElement("div");
+      p.className = "confetti-particle";
+      
+      const size = 12 + Math.random() * 16;
+      p.style.width = size + "px";
+      p.style.height = size + "px";
+      p.style.color = colors[Math.floor(Math.random() * colors.length)];
+      
+      p.innerHTML = shapes[Math.floor(Math.random() * shapes.length)];
+      
+      const startX = originX || (window.innerWidth / 2);
+      const startY = originY || (window.innerHeight / 2);
+      p.style.left = (startX - size / 2) + "px";
+      p.style.top = (startY - size / 2) + "px";
+      
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 80 + Math.random() * 140;
+      const x1 = Math.cos(angle) * distance;
+      const y1 = Math.sin(angle) * distance - (30 + Math.random() * 40);
+      
+      const x2 = x1 + (Math.random() * 60 - 30);
+      const y2 = y1 + (120 + Math.random() * 100);
+      
+      const r1 = (Math.random() * 180 - 90) + "deg";
+      const r2 = (Math.random() * 720 - 360) + "deg";
+      
+      p.style.setProperty("--x1", x1 + "px");
+      p.style.setProperty("--y1", y1 + "px");
+      p.style.setProperty("--x2", x2 + "px");
+      p.style.setProperty("--y2", y2 + "px");
+      p.style.setProperty("--r1", r1);
+      p.style.setProperty("--r2", r2);
+      
+      const duration = 1.2 + Math.random() * 0.8;
+      p.style.animation = `confetti-fall ${duration}s cubic-bezier(0.1, 0.8, 0.25, 1) forwards`;
+      
+      container.appendChild(p);
+      
+      setTimeout(() => {
+        p.remove();
+      }, (duration * 1000) + 100);
+    }
+  }
+
   function showQuestion(){
     const q = quizQuestions[currentQuestion];
     document.getElementById("currentQ").textContent = currentQuestion + 1;
@@ -1363,13 +1446,22 @@
         
         // show correct/wrong after delay
         setTimeout(() => {
+          let selectedIsCorrect = false;
           optionsContainer.querySelectorAll(".quiz-option").forEach((opt, i) => {
             if(i === q.correct){
               opt.classList.add("correct");
+              if (opt.classList.contains("selected")) {
+                selectedIsCorrect = true;
+              }
             } else if(opt.classList.contains("selected") && i !== q.correct){
               opt.classList.add("wrong");
             }
           });
+          
+          if (selectedIsCorrect) {
+            const rect = btn.getBoundingClientRect();
+            triggerCelebration(rect.left + rect.width / 2, rect.top + rect.height / 2);
+          }
           
           // show memory note
           showMemory(q.memory);

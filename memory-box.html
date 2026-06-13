@@ -55,6 +55,7 @@
     -webkit-font-smoothing:antialiased;
     touch-action:pan-y;
   }
+  body.no-scroll { overflow: hidden !important; height: 100% !important; }
   /* faint paper grain on the desk */
   body::before{
     content:""; position:fixed; inset:0; pointer-events:none; opacity:.05; z-index:0;
@@ -914,6 +915,9 @@
 </div> <!-- end main-content -->
 
 <script>
+  // Disable body scrolling during countdown/quiz experience
+  document.body.classList.add("no-scroll");
+
   /* --- preview art: makes the sample placeholder images. You can ignore this;
          once you've put in your own photos it isn't used. --- */
   function sampleImg(i){
@@ -1422,6 +1426,10 @@
       quizPage.classList.add("hidden");
       // show main memory box content
       document.getElementById("mainContent").classList.add("show");
+      
+      // Enable body scrolling and ensure we are at the top
+      document.body.classList.remove("no-scroll");
+      window.scrollTo(0, 0);
     }, 500);
   }
 

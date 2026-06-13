@@ -120,7 +120,7 @@
   .polaroid{
     position:absolute; z-index:2;
     width:210px; background:var(--paper);
-    padding:12px 12px 0;
+    padding:16px 12px 0;
     border-radius:3px;
     box-shadow:0 16px 34px -14px rgba(0,0,0,.75), 0 2px 6px rgba(0,0,0,.4);
     cursor:grab; user-select:none;
@@ -148,10 +148,10 @@
   }
   /* a strip of tape */
   .polaroid::before{
-    content:""; position:absolute; top:-12px; left:50%; transform:translateX(-50%) rotate(-3deg);
-    width:78px; height:26px;
+    content:""; position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-3deg);
+    width:74px; height:20px;
     background:rgba(255,236,179,.42);
-    box-shadow:0 1px 3px rgba(0,0,0,.25);
+    box-shadow:0 1px 3px rgba(0,0,0,.18);
     border-left:1px dashed rgba(0,0,0,.06); border-right:1px dashed rgba(0,0,0,.06);
   }
 

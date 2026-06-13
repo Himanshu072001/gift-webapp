@@ -637,19 +637,21 @@
   .frame .empty{ width:100%; aspect-ratio:1/1; background:#d9cdbb; display:flex; align-items:center;
     justify-content:center; color:#8a7f6d; font-size:.8rem; text-align:center; border-radius:2px; }
 
-  /* heart-shaped arrangement */
-  .wall.heart{ display:block !important; position:relative; width:100%; max-width:560px; margin:0 auto; min-height:320px;
+  /* heart-shaped arrangement - COMMENTED OUT FOR NOW */
+  /*
+  .wall.heart{ display:block !important; position:relative; width:100%; max-width:560px; margin:0 auto; min-height:400px;
     transform-origin:center; animation:heartThrob 3.4s ease-in-out infinite;
     column-count:auto !important; column-gap:0 !important; }
   .wall.heart .frame{ position:absolute; margin:0; padding:5px 5px 6px; }
+  .wall.heart .frame:not(.show){ opacity:0; }
   .wall.heart .frame img{ aspect-ratio:1/1; object-fit:cover; }
-  .wall.heart .frame .empty{ aspect-ratio:1/1; }
+  .wall.heart .frame .empty{ aspect-ratio:1/1; background:linear-gradient(45deg, #f3e6d4, #e8d5c0); display:flex; align-items:center; justify-content:center; border-radius:4px; font-size:0.8rem; color:#8a7f6d; }
   .wall.heart .frame .tag{ display:none; }
-  /* each photo gently floats; once revealed it breathes on its own */
-  .wall.heart .frame.show{ opacity:1; animation:floatPhoto 5.5s ease-in-out infinite; }
+  .wall.heart .frame.show{ opacity:1 !important; animation:floatPhoto 5.5s ease-in-out infinite; }
   .wall.heart .frame:hover{ animation-play-state:paused; z-index:5; }
   .wall.heart-caption{ text-align:center; font-family:"Caveat",cursive; color:var(--muted);
     font-size:1.1rem; margin-top:.5rem; }
+  */
   @keyframes heartThrob{
     0%,100%{ transform:scale(1); }
     10%    { transform:scale(1.035); }
@@ -1053,7 +1055,9 @@
   .main-content.show{
     opacity:1; pointer-events:auto;
   }
+
 </style>
+
 
 <!-- countdown page (hidden after target time) -->
 <div class="countdown-page" id="countdownPage">
@@ -1270,13 +1274,7 @@
       <button class="filter-btn" data-filter="chaotic">absolute chaos 🚨</button>
     </div>
     
-    <div class="layout-toggle-wrapper">
-      <span class="toggle-label">Layout:</span>
-      <div class="segmented-control" id="layoutToggle">
-        <button class="toggle-btn" data-layout="grid" id="layoutGridBtn">Grid ▦</button>
-        <button class="toggle-btn" data-layout="heart" id="layoutHeartBtn">Heart ♡</button>
-      </div>
-    </div>
+    <!-- Layout toggle removed -->
   </div>
   <div class="wall" id="wall"></div>
 </div>
@@ -2384,7 +2382,8 @@
       wall.innerHTML = filtered.map((g) => {
         const globalIndex = gallery.indexOf(g);
         const inner = g.img
-          ? `<img src="${g.img}" alt="${g.caption||'us'}" loading="lazy" draggable="false">`
+          ? `<img src="${g.img}" alt="${g.caption||'us'}" loading="lazy" draggable="false" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+             <div class="empty" style="display:none;">📷 ${g.caption || 'photo'}</div>`
           : `<div class="empty">add a photo</div>`;
         const tag = g.caption ? `<div class="tag">${g.caption}</div>` : "";
         return `<figure class="frame" data-i="${globalIndex}">${inner}${tag}</figure>`;
@@ -2394,11 +2393,22 @@
       const heartMode = currentGalleryShape === "heart" && frames.length;
 
       if (heartMode) {
+        console.log("Entering heart mode, adding 'heart' class to wall");
         wall.classList.add("heart");
+        console.log("Wall classes after adding heart:", wall.className);
+        console.log("Wall computed style display:", getComputedStyle(wall).display);
         // Force calculation after browser reflow
         requestAnimationFrame(() => {
           if (currentGalleryShape === "heart") {
             heartLayout();
+            // Ensure frames are visible in heart mode
+            setTimeout(() => {
+              console.log("Making frames visible in heart mode...");
+              frames.forEach((f, i) => {
+                f.classList.add("show");
+                console.log(`Frame ${i} classes:`, f.className, "opacity:", getComputedStyle(f).opacity);
+              });
+            }, 100);
           }
         });
       } else {
@@ -2445,14 +2455,19 @@
       const frames = [...wall.querySelectorAll(".frame")];
       const parentW = wall.parentElement ? wall.parentElement.clientWidth : 0;
       const W = Math.min(parentW || wall.clientWidth || wall.offsetWidth || 0, 560);
+      console.log("Heart layout - frames:", frames.length, "width:", W, "parentW:", parentW);
       if(W < 60){
+        console.log("Width too small, retrying...");
         if (currentGalleryShape === "heart") {
           requestAnimationFrame(heartLayout);
         }
         return;
       }   // wait for real width
       const N = frames.length;
-      if (N === 0) return;
+      if (N === 0) {
+        console.log("No frames found!");
+        return;
+      }
       const pts = [];
       for(let i=0;i<N;i++){
         const t = (i/N)*Math.PI*2;
@@ -2462,11 +2477,12 @@
       }
       const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
       const minX=Math.min(...xs), maxX=Math.max(...xs), minY=Math.min(...ys), maxY=Math.max(...ys);
-      const fr  = Math.max(54, Math.min(96, W/6));
-      const pad = fr/2 + 8;
+      const fr  = Math.max(80, Math.min(140, W/5));
+      const pad = fr/2 + 16;
       const s   = (W - pad*2) / (maxX - minX);
       const usedH = (maxY - minY) * s;
       const offX = pad, offY = pad;
+      console.log("Frame size:", fr, "Scale:", s, "Final height:", Math.max(400, usedH + pad*2));
       frames.forEach((f,i)=>{
         const cx = offX + (pts[i].x - minX) * s;
         const cy = offY + (pts[i].y - minY) * s;
@@ -2474,8 +2490,10 @@
         f.style.left  = (cx - fr/2) + "px";
         f.style.top   = (cy - fr/2) + "px";
         if (!reduce) f.style.animationDelay = (i*0.32).toFixed(2) + "s";
+        console.log(`Frame ${i}: position (${cx}, ${cy}), size ${fr}px`);
       });
-      wall.style.height = (usedH + pad*2) + "px";
+      wall.style.height = Math.max(400, usedH + pad*2) + "px";
+      console.log("Heart layout complete!");
     };
 
     // lightbox — simple framed-photo viewer (tap to enlarge, arrows to browse)
@@ -2525,7 +2543,8 @@
       });
     }
 
-    // layout toggle functionality
+    // layout toggle functionality - COMMENTED OUT
+    /*
     const layoutToggle = document.getElementById("layoutToggle");
     const gridBtn = document.getElementById("layoutGridBtn");
     const heartBtn = document.getElementById("layoutHeartBtn");
@@ -2559,6 +2578,7 @@
         }
       });
     }
+    */
 
     // initial render
     renderGallery(true);

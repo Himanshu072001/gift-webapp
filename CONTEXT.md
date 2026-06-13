@@ -19,8 +19,9 @@ Fully working and populated with **sample content** (illustrated placeholder ima
 
 ### **Pre-Memory Box Experience:**
 1. **Countdown Timer** — shows days, hours, minutes, seconds until her birthday at midnight. Includes floating hearts animation and "skip countdown →" button for testing.
-2. **Transition Page** — appears when countdown ends with "Happy Birthday!" message and "Let's reminisce ♡" button to start the quiz.
-3. **Romantic Quiz** — 5 interactive memory-based questions with multiple choice answers. Each correct answer reveals a sweet memory note. Includes navigation between questions.
+2. **Transition Page** — appears when countdown ends with "Happy Birthday!" message and "Let's reminisce ♡" button to start a funny 3-step verification flow.
+3. **Identity Verification Steps** — a playful, romantic 3-step check verifying her title as the cutest birthday girl, if she stole his hoodies, and terms of secrecy for his kitchen dancing.
+4. **Romantic Quiz** — 5 interactive memory-based questions with multiple choice answers. Each correct answer reveals a sweet memory note. Includes navigation between questions.
 
 ### **Main Memory Box (after quiz completion):**
 4. **Hero** — "happy birthday" + her name + intro line.

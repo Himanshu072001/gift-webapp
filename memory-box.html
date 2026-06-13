@@ -548,7 +548,7 @@
   }
   .transition-page.show{ opacity:1; pointer-events:auto; }
   .transition-page.hidden{ display:none; }
-  .transition-content{ position:relative; z-index:1; }
+  .transition-content{ position:relative; z-index:1; transition:opacity 0.25s ease; }
   .transition-content h1{
     font-family:"Fraunces",serif; font-weight:400;
     font-size:clamp(2.2rem,7vw,4rem); line-height:1.1; margin-bottom:1.5rem;
@@ -1074,14 +1074,94 @@
   const transitionPage = document.getElementById("transitionPage");
   const quizPage = document.getElementById("quizPage");
   
-  // start quiz button
-  document.getElementById("startQuiz").addEventListener("click", function(){
-    transitionPage.classList.remove("show");
+  // start quiz button click with funny verification steps
+  const startQuizBtn = document.getElementById("startQuiz");
+  const transitionContent = document.querySelector(".transition-content");
+  
+  const funnySteps = [
+    {
+      title: "Identity Verification 🔒",
+      desc: "Step 1 of 3: Are you currently wearing one of his oversized hoodies?",
+      options: [
+        { text: "Yes, it is my official uniform now.", next: 1 },
+        { text: "No, but I will definitely steal one later.", next: 1 }
+      ]
+    },
+    {
+      title: "Terms of Service 📜",
+      desc: "Step 2 of 3: Do you agree to absolute secrecy regarding his terrible kitchen dancing?",
+      options: [
+        { text: "I agree (and I will record it next time).", next: 2 },
+        { text: "I disagree, the world needs to see it.", next: 2 }
+      ]
+    },
+    {
+      title: "Final Authorization 👑",
+      desc: "Step 3 of 3: Please select your primary title to proceed:",
+      options: [
+        { text: "The Cutest Birthday Girl in the world", next: 3 },
+        { text: "The chief thief of his hoodies and snacks", next: 3 },
+        { text: "All of the above (Recommended)", next: 3 }
+      ]
+    },
+    {
+      title: "Access Granted! 🎉",
+      desc: "Verification successful. Welcome back, my favourite person. Let's see how well you remember us...",
+      options: [
+        { text: "Open the Box ♡", isFinal: true }
+      ]
+    }
+  ];
+
+  function runVerificationStep(stepIdx) {
+    const step = funnySteps[stepIdx];
+    
+    // Build options HTML
+    const optionsHtml = step.options.map(opt => {
+      if (opt.isFinal) {
+        return `<button class="transition-btn" id="finishVerification">${opt.text}</button>`;
+      }
+      return `<button class="transition-btn choice-btn" data-next="${opt.next}" style="margin: 0.5rem; display: block; width: 100%; max-width: 320px; font-size: 0.95rem; padding: 0.8rem 1.5rem; text-align: center;">${opt.text}</button>`;
+    }).join("");
+    
+    const newHtml = `
+      <h1>${step.title}</h1>
+      <p style="margin-bottom: 2rem;">${step.desc}</p>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; max-width: 100%; width: 100%;">
+        ${optionsHtml}
+      </div>
+    `;
+    
+    // Fade out, update, and fade in
+    transitionContent.style.opacity = 0;
     setTimeout(() => {
-      transitionPage.classList.add("hidden");
-      quizPage.classList.add("show");
-      initQuiz();
-    }, 300);
+      transitionContent.innerHTML = newHtml;
+      transitionContent.style.opacity = 1;
+      
+      // Bind event listeners to new buttons
+      const choiceButtons = transitionContent.querySelectorAll(".choice-btn");
+      choiceButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          runVerificationStep(parseInt(btn.dataset.next));
+        });
+      });
+      
+      const finishBtn = document.getElementById("finishVerification");
+      if (finishBtn) {
+        finishBtn.addEventListener("click", () => {
+          transitionPage.classList.remove("show");
+          setTimeout(() => {
+            transitionPage.classList.add("hidden");
+            quizPage.classList.add("show");
+            initQuiz();
+          }, 300);
+        });
+      }
+    }, 250);
+  }
+
+  startQuizBtn.addEventListener("click", function(){
+    runVerificationStep(0);
   });
   
   function initQuiz(){

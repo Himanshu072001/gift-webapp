@@ -570,6 +570,77 @@
     box-shadow:0 12px 32px rgba(197,54,43,.4);
   }
 
+  /* PIN container styling */
+  .pin-container {
+    position: relative;
+    margin: 0.5rem 0 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  #hiddenPinInput {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+    pointer-events: none;
+  }
+  .pin-hearts-display {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+  }
+  .pin-heart-svg {
+    width: 32px;
+    height: 32px;
+    color: var(--muted);
+    fill: none;
+    stroke: var(--muted);
+    stroke-width: 2;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  .pin-heart-svg.filled {
+    color: var(--thread);
+    fill: var(--thread);
+    stroke: var(--thread-glow);
+    filter: drop-shadow(0 0 6px var(--thread-glow));
+    transform: scale(1.2);
+  }
+  .pin-heart-svg.error {
+    color: var(--thread-glow);
+    fill: var(--thread-glow);
+    stroke: var(--thread);
+    animation: wiggle 0.4s ease;
+  }
+  .pin-heart-svg.correct-anim {
+    animation: popPulse 0.6s ease-in-out infinite alternate;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  @keyframes popPulse {
+    0% { transform: scale(1.1); filter: drop-shadow(0 0 4px var(--thread-glow)); }
+    100% { transform: scale(1.3); filter: drop-shadow(0 0 12px var(--thread-glow)) drop-shadow(0 0 8px var(--lamp)); }
+  }
+  .pin-hint {
+    font-family: "Caveat", cursive;
+    font-size: 1.35rem;
+    color: var(--lamp);
+    opacity: 0.85;
+    min-height: 1.6rem;
+    transition: color 0.3s ease;
+  }
+  .pin-hint.error {
+    color: var(--thread-glow);
+  }
+
   /* ---------- quiz page ---------- */
   .quiz-page{
     position:fixed; inset:0; z-index:80;
@@ -1080,7 +1151,7 @@
   
   const funnySteps = [
     {
-      title: "Identity Verification 🔒🧥",
+      title: "Identity Verification 🔒",
       desc: "Step 1 of 3: Are you currently wearing one of his oversized hoodies? 👀",
       options: [
         { text: "Yes, it is my official uniform now! 🧸‍♀️", next: 1 },
@@ -1105,56 +1176,147 @@
       ]
     },
     {
-      title: "Access Granted! 🎉🥳",
-      desc: "Verification successful! Welcome back, my favourite person. Let's see how well you remember us... 🥹💖",
+      title: "Secret Code Required 🔒🔑",
+      desc: "Please enter our secret date key to unlock your Memory Box: 🥹💖",
       options: [
         { text: "Open the Box ♡ 🎁📦", isFinal: true }
-      ]
+      ],
+      isPinStep: true
     }
   ];
+
+  function setupPinLogic() {
+    const hiddenInput = document.getElementById("hiddenPinInput");
+    const heartsDisplay = document.getElementById("pinHeartsDisplay");
+    const pinHint = document.getElementById("pinHint");
+    const finishBtn = document.getElementById("finishVerification");
+    const heartSvgs = heartsDisplay.querySelectorAll(".pin-heart-svg");
+    
+    // Auto-focus hidden input on click of the display
+    heartsDisplay.addEventListener("click", () => {
+      hiddenInput.focus();
+    });
+    
+    // Auto-focus immediately
+    hiddenInput.focus();
+    
+    // Check when user types
+    hiddenInput.addEventListener("input", (e) => {
+      const value = e.target.value.replace(/\D/g, ""); // only digits
+      e.target.value = value; // update input value
+      
+      // Update filled/empty states of hearts
+      heartSvgs.forEach((svg, idx) => {
+        if (idx < value.length) {
+          svg.classList.add("filled");
+        } else {
+          svg.classList.remove("filled");
+        }
+        svg.classList.remove("error", "correct-anim");
+      });
+      
+      pinHint.classList.remove("error");
+      pinHint.textContent = "enter our secret date (DDMMYYYY) 📅";
+      finishBtn.disabled = true;
+      finishBtn.style.opacity = 0.5;
+      finishBtn.style.cursor = "not-allowed";
+      finishBtn.style.boxShadow = "none";
+      
+      // Verify when 8 digits are entered
+      if (value.length === 8) {
+        if (value === "27062000") {
+          // Correct PIN!
+          heartSvgs.forEach(svg => {
+            svg.classList.add("correct-anim");
+          });
+          pinHint.textContent = "Correct code! Access granted 💖✨";
+          
+          setTimeout(() => {
+            finishBtn.disabled = false;
+            finishBtn.style.opacity = 1;
+            finishBtn.style.cursor = "pointer";
+            finishBtn.style.boxShadow = "0 8px 32px rgba(255,215,154,0.4), 0 0 20px rgba(197,54,43,0.4)";
+          }, 300);
+        } else {
+          // Incorrect PIN!
+          heartSvgs.forEach(svg => {
+            svg.classList.add("error");
+          });
+          pinHint.textContent = "Hmm, that secret date doesn't match... 😢 Try again!";
+          pinHint.classList.add("error");
+          
+          // Clear input after a short delay so they can retry
+          setTimeout(() => {
+            hiddenInput.value = "";
+            heartSvgs.forEach(svg => {
+              svg.classList.remove("filled", "error");
+            });
+            hiddenInput.focus();
+          }, 1200);
+        }
+      }
+    });
+
+    // Handle button click to finish
+    finishBtn.addEventListener("click", () => {
+      transitionPage.classList.remove("show");
+      setTimeout(() => {
+        transitionPage.classList.add("hidden");
+        quizPage.classList.add("show");
+        initQuiz();
+      }, 300);
+    });
+  }
 
   function runVerificationStep(stepIdx) {
     const step = funnySteps[stepIdx];
     
-    // Build options HTML
-    const optionsHtml = step.options.map(opt => {
-      if (opt.isFinal) {
-        return `<button class="transition-btn" id="finishVerification">${opt.text}</button>`;
-      }
-      return `<button class="transition-btn choice-btn" data-next="${opt.next}" style="margin: 0.5rem; display: block; width: 100%; max-width: 320px; font-size: 0.95rem; padding: 0.8rem 1.5rem; text-align: center;">${opt.text}</button>`;
-    }).join("");
+    let optionsHtml = '';
+    let pinHtml = '';
+    
+    if (step.isPinStep) {
+      pinHtml = `
+        <div class="pin-container">
+          <input type="tel" id="hiddenPinInput" maxlength="8" autocomplete="off">
+          <div class="pin-hearts-display" id="pinHeartsDisplay">
+            ${Array.from({length: 8}, (_, idx) => `
+              <svg class="pin-heart-svg" data-index="${idx}" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            `).join("")}
+          </div>
+          <p class="pin-hint" id="pinHint">enter our secret date (DDMMYYYY) 📅</p>
+        </div>
+      `;
+      optionsHtml = `<button class="transition-btn" id="finishVerification" disabled style="opacity: 0.5; cursor: not-allowed; transition: all 0.3s ease;">Open the Box ♡ 🎁📦</button>`;
+    } else {
+      optionsHtml = step.options.map(opt => {
+        return `<button class="transition-btn choice-btn" data-next="${opt.next}" style="margin: 0.5rem; display: block; width: 100%; max-width: 320px; font-size: 0.95rem; padding: 0.8rem 1.5rem; text-align: center;">${opt.text}</button>`;
+      }).join("");
+    }
     
     const newHtml = `
       <h1>${step.title}</h1>
-      <p style="margin-bottom: 2rem;">${step.desc}</p>
+      <p style="margin-bottom: 1rem;">${step.desc}</p>
+      ${pinHtml}
       <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem; max-width: 100%; width: 100%;">
         ${optionsHtml}
       </div>
     `;
     
-    // Fade out, update, and fade in
     transitionContent.style.opacity = 0;
     setTimeout(() => {
       transitionContent.innerHTML = newHtml;
       transitionContent.style.opacity = 1;
       
-      // Bind event listeners to new buttons
-      const choiceButtons = transitionContent.querySelectorAll(".choice-btn");
-      choiceButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          runVerificationStep(parseInt(btn.dataset.next));
-        });
-      });
-      
-      const finishBtn = document.getElementById("finishVerification");
-      if (finishBtn) {
-        finishBtn.addEventListener("click", () => {
-          transitionPage.classList.remove("show");
-          setTimeout(() => {
-            transitionPage.classList.add("hidden");
-            quizPage.classList.add("show");
-            initQuiz();
-          }, 300);
+      if (step.isPinStep) {
+        setupPinLogic();
+      } else {
+        const choiceButtons = transitionContent.querySelectorAll(".choice-btn");
+        choiceButtons.forEach(btn => {
+          btn.addEventListener("click", () => {
+            runVerificationStep(parseInt(btn.dataset.next));
+          });
         });
       }
     }, 250);

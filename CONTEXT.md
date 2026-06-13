@@ -4,7 +4,7 @@
 
 **The Memory Box** — a single-page, self-contained website built as a birthday gift for a partner. It's an interactive digital keepsake: photos, a heartfelt letter, things-I-love notes, wishes, inside jokes, a wall of framed photos, and a way for her to write back.
 
-It is **one file**: `memory-box.html`. No build step, no dependencies to install, no server required. It runs by opening the file in a browser.
+It is **one file**: `index.html`. No build step, no dependencies to install, no server required. It runs by opening the file in a browser.
 
 ## Who it's for
 
@@ -40,7 +40,7 @@ Fully working and populated with **sample content** (illustrated placeholder ima
 
 ```
 your-folder/
-├── memory-box.html        ← the site (rename to index.html for Vercel)
+├── index.html             ← the site
 ├── optimize_photos.py     ← python script to optimize photos
 ├── photos_raw/            ← your raw, unoptimized images (ignored in git)
 └── photos/                ← WebP optimized images used by the site
@@ -53,7 +53,7 @@ your-folder/
 ## Hosting
 
 Free options, no account complexity:
-- **Vercel** — import repository, deploys automatically (rename `memory-box.html` to `index.html` first).
+- **Vercel** — import repository, deploys automatically.
 - **Netlify Drop** (`app.netlify.com/drop`) — drag the HTML file (plus `photos/` folder) to get an instant shareable link.
 - **GitHub Pages** — commit the file and enable Pages.
 

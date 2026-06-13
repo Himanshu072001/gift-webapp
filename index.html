@@ -642,26 +642,41 @@
     color: var(--thread-glow);
   }
 
-  /* Confetti particle celebration animation */
-  .confetti-particle {
-    position: fixed;
-    pointer-events: none;
-    z-index: 9999;
-    will-change: transform, opacity;
+  /* Option icon container & validation animations */
+  .option-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    margin-left: 12px;
+    flex-shrink: 0;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   }
-  @keyframes confetti-fall {
-    0% {
-      transform: translate(0, 0) rotate(0deg) scale(0);
-      opacity: 1;
-    }
-    10% {
-      opacity: 1;
-      transform: translate(var(--x1), var(--y1)) rotate(var(--r1)) scale(1.2);
-    }
-    100% {
-      transform: translate(var(--x2), var(--y2)) rotate(var(--r2)) scale(0.6);
-      opacity: 0;
-    }
+  .quiz-option.correct .option-icon {
+    opacity: 1;
+    transform: scale(1);
+    color: #a7d8c9;
+  }
+  .quiz-option.wrong .option-icon {
+    opacity: 1;
+    transform: scale(1);
+    color: var(--thread-glow);
+  }
+  @keyframes correct-glow {
+    0% { box-shadow: 0 0 0 0 rgba(167, 216, 201, 0); }
+    50% { box-shadow: 0 0 20px 4px rgba(167, 216, 201, 0.5); }
+    100% { box-shadow: 0 0 0 0 rgba(167, 216, 201, 0); }
+  }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+  .quiz-option.shake {
+    animation: shake 0.4s ease-in-out;
   }
 
   /* ---------- quiz page ---------- */
@@ -709,6 +724,7 @@
     display:grid; gap:1rem;
   }
   .quiz-option{
+    display:flex; justify-content:space-between; align-items:center;
     background:rgba(243,236,224,.05); border:2px solid rgba(243,236,224,.1);
     border-radius:8px; padding:1rem 1.2rem; cursor:pointer; transition:all .2s ease;
     color:var(--paper); font-family:"Karla",sans-serif; font-size:1rem;
@@ -723,12 +739,14 @@
     color:var(--lamp);
   }
   .quiz-option.correct{
-    background:rgba(167,216,201,.2); border-color:#5b8c85;
-    color:#a7d8c9;
+    background:rgba(167,216,201,.25) !important; border-color:#5b8c85 !important;
+    color:#a7d8c9 !important;
+    animation: correct-glow 1.5s ease-in-out infinite;
+    transform: scale(1.02);
   }
   .quiz-option.wrong{
-    background:rgba(197,54,43,.15); border-color:var(--thread);
-    color:var(--muted);
+    background:rgba(197,54,43,.15) !important; border-color:var(--thread) !important;
+    color:var(--muted) !important;
   }
   .quiz-memory{
     background:var(--paper); color:var(--pencil); border-radius:8px;
@@ -1359,66 +1377,224 @@
     showQuestion();
   }
   
+  // Canvas-based premium particle celebration engine
+  class ConfettiEngine {
+    constructor() {
+      this.canvas = null;
+      this.ctx = null;
+      this.particles = [];
+      this.animationId = null;
+      this.active = false;
+    }
+
+    init() {
+      if (this.canvas) return;
+      this.canvas = document.createElement('canvas');
+      this.canvas.style.position = 'fixed';
+      this.canvas.style.top = '0';
+      this.canvas.style.left = '0';
+      this.canvas.style.width = '100vw';
+      this.canvas.style.height = '100vh';
+      this.canvas.style.pointerEvents = 'none';
+      this.canvas.style.zIndex = '99999';
+      document.body.appendChild(this.canvas);
+      this.ctx = this.canvas.getContext('2d');
+      this.resize();
+      window.addEventListener('resize', () => this.resize());
+    }
+
+    resize() {
+      if (!this.canvas) return;
+      this.canvas.width = window.innerWidth * window.devicePixelRatio;
+      this.canvas.height = window.innerHeight * window.devicePixelRatio;
+      this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    }
+
+    createParticle(x, y, angle, speed, color, shape) {
+      const size = 8 + Math.random() * 14;
+      return {
+        x,
+        y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        gravity: 0.12 + Math.random() * 0.12,
+        rotation: Math.random() * 360,
+        rotationSpeed: (Math.random() - 0.5) * 6,
+        rotationX: Math.random() * 360,
+        rotationXSpeed: (Math.random() - 0.5) * 4,
+        color,
+        shape,
+        size,
+        opacity: 1,
+        decay: 0.006 + Math.random() * 0.008,
+        wobble: Math.random() * 10,
+        wobbleSpeed: 0.04 + Math.random() * 0.04
+      };
+    }
+
+    burst(x, y, count = 40) {
+      this.init();
+      const colors = ["#ffd79a", "#f3ece0", "#c5362b", "#e8584b", "#f7b9a8", "#bfe0c4", "#bcd3f0", "#d6c5e8", "#faebcd"];
+      const shapes = ['circle', 'square', 'heart', 'star', 'ribbon'];
+      for (let i = 0; i < count; i++) {
+        const angle = (Math.random() * 360) * Math.PI / 180;
+        const speed = 3 + Math.random() * 7;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        this.particles.push(this.createParticle(x, y, angle, speed, color, shape));
+      }
+      this.start();
+    }
+
+    cannon(x, y, angleDeg, count = 70) {
+      this.init();
+      const colors = ["#ffd79a", "#f3ece0", "#c5362b", "#e8584b", "#f7b9a8", "#bfe0c4", "#bcd3f0", "#d6c5e8", "#faebcd"];
+      const shapes = ['circle', 'square', 'heart', 'star', 'ribbon'];
+      for (let i = 0; i < count; i++) {
+        const angle = (angleDeg + (Math.random() - 0.5) * 35) * Math.PI / 180;
+        const speed = 12 + Math.random() * 14;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        this.particles.push(this.createParticle(x, y, angle, speed, color, shape));
+      }
+      this.start();
+    }
+
+    start() {
+      if (this.active) return;
+      this.active = true;
+      this.loop();
+    }
+
+    drawHeart(ctx, x, y, size) {
+      ctx.beginPath();
+      ctx.moveTo(x, y + size / 4);
+      ctx.quadraticCurveTo(x, y, x + size / 4, y);
+      ctx.quadraticCurveTo(x + size / 2, y, x + size / 2, y + size / 4);
+      ctx.quadraticCurveTo(x + size / 2, y, x + (size * 3) / 4, y);
+      ctx.quadraticCurveTo(x + size, y, x + size, y + size / 4);
+      ctx.quadraticCurveTo(x + size, y + size / 2, x + (size * 3) / 4, y + (size * 3) / 4);
+      ctx.lineTo(x + size / 2, y + size);
+      ctx.lineTo(x + size / 4, y + (size * 3) / 4);
+      ctx.quadraticCurveTo(x, y + size / 2, x, y + size / 4);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+      let rot = Math.PI / 2 * 3;
+      let x = cx;
+      let y = cy;
+      let step = Math.PI / spikes;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - outerRadius);
+      for (let i = 0; i < spikes; i++) {
+        x = cx + Math.cos(rot) * outerRadius;
+        y = cy + Math.sin(rot) * outerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+
+        x = cx + Math.cos(rot) * innerRadius;
+        y = cy + Math.sin(rot) * innerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+      }
+      ctx.lineTo(cx, cy - outerRadius);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    loop() {
+      if (!this.active) return;
+      
+      this.ctx.save();
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.restore();
+      
+      let alive = false;
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        if (p.opacity <= 0 || p.y > height + 20) continue;
+        
+        alive = true;
+        
+        p.vy += p.gravity;
+        p.vx += Math.sin(p.wobble) * 0.08;
+        p.wobble += p.wobbleSpeed;
+        
+        p.vx *= 0.97;
+        p.vy *= 0.97;
+        
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotation += p.rotationSpeed;
+        p.rotationX += p.rotationXSpeed;
+        p.opacity -= p.decay;
+
+        this.ctx.save();
+        this.ctx.translate(p.x, p.y);
+        const cosX = Math.cos(p.rotationX * Math.PI / 180);
+        this.ctx.scale(1, cosX);
+        this.ctx.rotate(p.rotation * Math.PI / 180);
+        
+        this.ctx.fillStyle = p.color;
+        this.ctx.globalAlpha = Math.max(0, p.opacity);
+
+        if (p.shape === 'circle') {
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2);
+          this.ctx.fill();
+        } else if (p.shape === 'square') {
+          this.ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        } else if (p.shape === 'ribbon') {
+          this.ctx.fillRect(-p.size / 2, -p.size / 6, p.size, p.size / 3);
+        } else if (p.shape === 'heart') {
+          this.drawHeart(this.ctx, -p.size / 2, -p.size / 2, p.size);
+        } else if (p.shape === 'star') {
+          this.drawStar(this.ctx, 0, 0, 5, p.size / 2, p.size / 4);
+        }
+
+        this.ctx.restore();
+      }
+
+      if (alive) {
+        this.animationId = requestAnimationFrame(() => this.loop());
+      } else {
+        this.active = false;
+        this.ctx.save();
+        this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.restore();
+      }
+    }
+  }
+
+  const confettiEngine = new ConfettiEngine();
+
   function triggerCelebration(originX, originY) {
     if (reduce) return;
     
-    const colors = ["#ffd79a", "#f3ece0", "#c5362b", "#e8584b", "#f7b9a8", "#bfe0c4", "#bcd3f0"];
-    const shapes = [
-      // Heart SVG
-      `<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
-      // Star SVG
-      `<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 2L14.8 8.6L22 9.2L16.5 14L18.2 21L12 17.3L5.8 21L7.5 14L2 9.2L9.2 8.6L12 2Z"/></svg>`,
-      // Sparkle SVG
-      `<svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%"><path d="M12 3a9 9 0 0 0 9 9 9 9 0 0 0-9 9 9 9 0 0 0-9-9 9 9 0 0 0 9-9z"/></svg>`
-    ];
-
-    const particleCount = 45;
-    const container = document.body;
-
-    for (let i = 0; i < particleCount; i++) {
-      const p = document.createElement("div");
-      p.className = "confetti-particle";
-      
-      const size = 12 + Math.random() * 16;
-      p.style.width = size + "px";
-      p.style.height = size + "px";
-      p.style.color = colors[Math.floor(Math.random() * colors.length)];
-      
-      p.innerHTML = shapes[Math.floor(Math.random() * shapes.length)];
-      
-      const startX = originX || (window.innerWidth / 2);
-      const startY = originY || (window.innerHeight / 2);
-      p.style.left = (startX - size / 2) + "px";
-      p.style.top = (startY - size / 2) + "px";
-      
-      const angle = Math.random() * Math.PI * 2;
-      const distance = 80 + Math.random() * 140;
-      const x1 = Math.cos(angle) * distance;
-      const y1 = Math.sin(angle) * distance - (30 + Math.random() * 40);
-      
-      const x2 = x1 + (Math.random() * 60 - 30);
-      const y2 = y1 + (120 + Math.random() * 100);
-      
-      const r1 = (Math.random() * 180 - 90) + "deg";
-      const r2 = (Math.random() * 720 - 360) + "deg";
-      
-      p.style.setProperty("--x1", x1 + "px");
-      p.style.setProperty("--y1", y1 + "px");
-      p.style.setProperty("--x2", x2 + "px");
-      p.style.setProperty("--y2", y2 + "px");
-      p.style.setProperty("--r1", r1);
-      p.style.setProperty("--r2", r2);
-      
-      const duration = 1.2 + Math.random() * 0.8;
-      p.style.animation = `confetti-fall ${duration}s cubic-bezier(0.1, 0.8, 0.25, 1) forwards`;
-      
-      container.appendChild(p);
-      
-      setTimeout(() => {
-        p.remove();
-      }, (duration * 1000) + 100);
-    }
+    // 1. Burst at the clicked answer button
+    confettiEngine.burst(originX, originY, 45);
+    
+    // 2. Left side cannon blast
+    setTimeout(() => {
+      confettiEngine.cannon(0, window.innerHeight, 315, 75);
+    }, 150);
+    
+    // 3. Right side cannon blast
+    setTimeout(() => {
+      confettiEngine.cannon(window.innerWidth, window.innerHeight, 225, 75);
+    }, 300);
   }
+
+  const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+  const crossIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
 
   function showQuestion(){
     const q = quizQuestions[currentQuestion];
@@ -1427,17 +1603,27 @@
     
     const optionsContainer = document.getElementById("optionsContainer");
     optionsContainer.innerHTML = "";
+    optionsContainer.style.pointerEvents = "auto";
     
     q.options.forEach((option, index) => {
       const btn = document.createElement("div");
       btn.className = "quiz-option";
-      btn.textContent = option;
       btn.dataset.index = index;
+      btn.innerHTML = `
+        <span class="option-text">${option}</span>
+        <span class="option-icon"></span>
+      `;
       
       btn.addEventListener("click", function(){
+        // Disable further clicking during validation
+        optionsContainer.style.pointerEvents = "none";
+        
         // remove previous selections
         optionsContainer.querySelectorAll(".quiz-option").forEach(opt => {
-          opt.classList.remove("selected", "correct", "wrong");
+          opt.classList.remove("selected", "correct", "wrong", "shake");
+          opt.style.opacity = "1";
+          const iconSpan = opt.querySelector(".option-icon");
+          if (iconSpan) iconSpan.innerHTML = "";
         });
         
         // mark selection
@@ -1448,13 +1634,19 @@
         setTimeout(() => {
           let selectedIsCorrect = false;
           optionsContainer.querySelectorAll(".quiz-option").forEach((opt, i) => {
+            const iconSpan = opt.querySelector(".option-icon");
             if(i === q.correct){
               opt.classList.add("correct");
+              if (iconSpan) iconSpan.innerHTML = checkIcon;
               if (opt.classList.contains("selected")) {
                 selectedIsCorrect = true;
               }
             } else if(opt.classList.contains("selected") && i !== q.correct){
               opt.classList.add("wrong");
+              opt.classList.add("shake");
+              if (iconSpan) iconSpan.innerHTML = crossIcon;
+            } else {
+              opt.style.opacity = "0.4"; // dim other options
             }
           });
           

@@ -4,10 +4,10 @@ Operating manual for any AI agent working in this repository. For Claude-specifi
 
 ## Project at a glance
 
-- **Type:** static, single-file web page (`memory-box.html` or `index.html` for Vercel).
+- **Type:** static, single-file web page (`index.html`).
 - **Stack:** plain HTML + CSS + vanilla JS, Google Fonts via CDN link. No framework, no build, no package manager, no server.
 - **Run:** open the HTML file in any modern browser (works from `file://`).
-- **Deploy:** drag to Netlify Drop, push to GitHub Pages, or import to Vercel (rename to `index.html`). Ship the HTML file plus the `photos/` folder.
+- **Deploy:** drag to Netlify Drop, push to GitHub Pages, or import to Vercel. Ship the HTML file plus the `photos/` folder.
 
 ## Repository conventions
 

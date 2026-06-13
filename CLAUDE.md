@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude (and Claude Code) when working on **The Memory Box** (`memory-box.html`). Read `CONTEXT.md` and `DESIGN.md` alongside this.
+Guidance for Claude (and Claude Code) when working on **The Memory Box** (`index.html`). Read `CONTEXT.md` and `DESIGN.md` alongside this.
 
 ## The golden rule
 

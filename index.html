@@ -1603,7 +1603,14 @@
     
     const optionsContainer = document.getElementById("optionsContainer");
     optionsContainer.innerHTML = "";
-    optionsContainer.style.pointerEvents = "auto";
+    
+    const hasAnswered = userAnswers[currentQuestion] !== undefined;
+    
+    if (hasAnswered) {
+      optionsContainer.style.pointerEvents = "none";
+    } else {
+      optionsContainer.style.pointerEvents = "auto";
+    }
     
     q.options.forEach((option, index) => {
       const btn = document.createElement("div");
@@ -1614,64 +1621,84 @@
         <span class="option-icon"></span>
       `;
       
-      btn.addEventListener("click", function(){
-        // Disable further clicking during validation
-        optionsContainer.style.pointerEvents = "none";
-        
-        // remove previous selections
-        optionsContainer.querySelectorAll(".quiz-option").forEach(opt => {
-          opt.classList.remove("selected", "correct", "wrong", "shake");
-          opt.style.opacity = "1";
-          const iconSpan = opt.querySelector(".option-icon");
-          if (iconSpan) iconSpan.innerHTML = "";
-        });
-        
-        // mark selection
-        btn.classList.add("selected");
-        userAnswers[currentQuestion] = index;
-        
-        // show correct/wrong after delay
-        setTimeout(() => {
-          let selectedIsCorrect = false;
-          optionsContainer.querySelectorAll(".quiz-option").forEach((opt, i) => {
-            const iconSpan = opt.querySelector(".option-icon");
-            if(i === q.correct){
-              opt.classList.add("correct");
-              if (iconSpan) iconSpan.innerHTML = checkIcon;
-              if (opt.classList.contains("selected")) {
-                selectedIsCorrect = true;
-              }
-            } else if(opt.classList.contains("selected") && i !== q.correct){
-              opt.classList.add("wrong");
-              opt.classList.add("shake");
-              if (iconSpan) iconSpan.innerHTML = crossIcon;
-            } else {
-              opt.style.opacity = "0.4"; // dim other options
-            }
+      const iconSpan = btn.querySelector(".option-icon");
+      
+      if (hasAnswered) {
+        if (index === q.correct) {
+          btn.classList.add("correct");
+          if (iconSpan) iconSpan.innerHTML = checkIcon;
+        } else {
+          btn.style.opacity = "0.4";
+        }
+      } else {
+        btn.addEventListener("click", function(){
+          // Prevent clicking while evaluating this choice
+          optionsContainer.style.pointerEvents = "none";
+          
+          // Remove 'selected' from all options
+          optionsContainer.querySelectorAll(".quiz-option").forEach(opt => {
+            opt.classList.remove("selected");
           });
           
-          if (selectedIsCorrect) {
-            const rect = btn.getBoundingClientRect();
-            triggerCelebration(rect.left + rect.width / 2, rect.top + rect.height / 2);
-          }
+          // Mark current click as selected
+          btn.classList.add("selected");
           
-          // show memory note
-          showMemory(q.memory);
-          
-          // enable next button
-          document.getElementById("quizNext").disabled = false;
-        }, 800);
-      });
+          // Wait 800ms to reveal correctness
+          setTimeout(() => {
+            const currentIconSpan = btn.querySelector(".option-icon");
+            
+            if (index === q.correct) {
+              // Correct choice!
+              userAnswers[currentQuestion] = index;
+              btn.classList.remove("selected");
+              btn.classList.add("correct");
+              if (currentIconSpan) currentIconSpan.innerHTML = checkIcon;
+              
+              // Dim other unselected options
+              optionsContainer.querySelectorAll(".quiz-option").forEach(opt => {
+                if (opt !== btn) {
+                  opt.style.opacity = "0.4";
+                  opt.style.pointerEvents = "none";
+                }
+              });
+              
+              // Trigger celebration
+              const rect = btn.getBoundingClientRect();
+              triggerCelebration(rect.left + rect.width / 2, rect.top + rect.height / 2);
+              
+              // Show memory note
+              showMemory(q.memory);
+              
+              // Enable next button
+              document.getElementById("quizNext").disabled = false;
+            } else {
+              // Wrong choice!
+              btn.classList.remove("selected");
+              btn.classList.add("wrong");
+              btn.classList.add("shake");
+              btn.style.pointerEvents = "none"; // Can't select this wrong option again
+              if (currentIconSpan) currentIconSpan.innerHTML = crossIcon;
+              
+              // Re-enable options container to let her choose next options
+              optionsContainer.style.pointerEvents = "auto";
+            }
+          }, 800);
+        });
+      }
       
       optionsContainer.appendChild(btn);
     });
     
-    // hide memory note
-    document.getElementById("memoryNote").classList.remove("show");
+    // update memory note display
+    if (hasAnswered) {
+      showMemory(q.memory);
+    } else {
+      document.getElementById("memoryNote").classList.remove("show");
+    }
     
     // update navigation
     document.getElementById("quizPrev").disabled = currentQuestion === 0;
-    document.getElementById("quizNext").disabled = true;
+    document.getElementById("quizNext").disabled = !hasAnswered;
     
     if(currentQuestion === quizQuestions.length - 1){
       document.getElementById("quizNext").textContent = "Finish Quiz";

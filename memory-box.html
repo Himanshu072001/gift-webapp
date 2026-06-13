@@ -278,6 +278,47 @@
   .slip:nth-child(even){ transform:rotate(.8deg); background:#e0cdab; }
   .slip::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:8px;
     background:radial-gradient(circle at left, transparent 0 3px, #c9b48d 3px) left/8px 10px repeat-y; }
+  .slip.has-img {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .mini-polaroid {
+    flex-shrink: 0;
+    width: 65px;
+    background: var(--paper);
+    padding: 4px 4px 10px;
+    border-radius: 2px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transform: rotate(3deg);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+  }
+  .mini-polaroid::before {
+    content: "";
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(-4deg);
+    width: 28px;
+    height: 10px;
+    background: rgba(255,236,179,0.5);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  }
+  .mini-polaroid:hover {
+    transform: scale(1.15) rotate(-2deg);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+    z-index: 2;
+  }
+  .mini-polaroid img {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    display: block;
+    border-radius: 1px;
+  }
 
   /* guestbook reply */
   .reply-box{ background:var(--paper); color:var(--pencil); border-radius:6px; padding:1.4rem; transform:rotate(-.4deg);
@@ -290,6 +331,37 @@
     padding:.7rem 1.5rem; border-radius:999px; transition:transform .15s ease, filter .2s ease; }
   .reply-box .send:hover{ filter:brightness(1.08); transform:translateY(-1px); }
   .reply-box .thanks{ font-family:"Caveat",cursive; color:var(--thread); font-size:1.5rem; margin-top:.8rem; }
+
+  /* gallery filters */
+  .gallery-filters {
+    display: flex;
+    justify-content: center;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    background: rgba(243, 236, 224, 0.05);
+    border: 1px solid rgba(243, 236, 224, 0.15);
+    color: var(--muted);
+    font-family: "Caveat", cursive;
+    font-size: 1.35rem;
+    padding: 0.3rem 1.1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .filter-btn:hover {
+    background: rgba(243, 236, 224, 0.1);
+    color: var(--paper);
+    transform: translateY(-1px);
+  }
+  .filter-btn.active {
+    background: var(--thread);
+    border-color: var(--thread);
+    color: #fff2ec;
+    box-shadow: 0 4px 12px rgba(197, 54, 43, 0.25);
+  }
 
   /* ---------- gallery wall ---------- */
   .wall{ column-gap:14px; column-count:3; }
@@ -718,6 +790,12 @@
 <!-- gallery wall -->
 <div class="written" style="max-width:1000px">
   <div class="sec-head"><p class="eyebrow">every single one</p><h2>Us, in pictures</h2></div>
+  <div class="gallery-filters" id="galleryFilters">
+    <button class="filter-btn active" data-filter="all">show all</button>
+    <button class="filter-btn" data-filter="sweet">sweet memories ♡</button>
+    <button class="filter-btn" data-filter="silly">silly snaps 🤪</button>
+    <button class="filter-btn" data-filter="chaotic">absolute chaos 🚨</button>
+  </div>
   <div class="wall" id="wall"></div>
 </div>
 
@@ -801,16 +879,12 @@
   const HER_NAME = "Her Name";
 
   const moments = [
-    { date:"the beginning", title:"The day it started",
-      note:"Write what you remember — where you were, the first thing you noticed, how it felt.", img:sampleImg(0) },
-    { date:"our first trip", title:"Somewhere new, together",
-      note:"A memory from a place you went together.", img:sampleImg(2) },
-    { date:"that night", title:"Laughing till it hurt",
-      note:"A funny or cozy memory that’s just yours.", img:sampleImg(5) },
-    { date:"a small ordinary day", title:"Nothing special, everything special",
-      note:"An ordinary moment that meant a lot.", img:sampleImg(6) },
-    { date:"lately", title:"Right here, right now",
-      note:"Where you are today and why she makes it better.", img:sampleImg(3) }
+    { date: "Aug 2024", title: "The day we met", note: "Where it all began — you had that beautiful smile and I was so nervous.", img: "photos/01.webp" },
+    { date: "Oct 2024", title: "Somewhere new, together", note: "Our first trip out of town. Remember how we got lost but laughed it off?", img: "photos/02.webp" },
+    { date: "Dec 2024", title: "Laughing till it hurt", note: "That cozy late night when we stayed up talking about everything and nothing.", img: "photos/03.webp" },
+    { date: "Jan 2025", title: "Nothing special, everything special", note: "A simple lazy Sunday making breakfast and dancing in the kitchen.", img: "photos/04.webp" },
+    { date: "Apr 2025", title: "Right here, right now", note: "Every single day with you is my favourite new memory. I love you.", img: "photos/05.webp" },
+    { date: "always", title: "Holding hands", note: "Here's to a lifetime of adventures and holding hands wherever we go.", img: "photos/06.webp" }
   ];
 
   // a longer letter — each "…" string is its own paragraph
@@ -844,31 +918,53 @@
   ];
 
   // inside jokes — short lines only the two of you understand
+  // You can link these to your "most funniest" (4-digit) photos.
   const jokes = [
-    "you know what you did 🌮",
-    "\"five more minutes\" (it's never five minutes)",
-    "the duck. we don't talk about the duck."
+    { text: "you know what you did 🌮 (click to see why)", img: "photos/1111.webp" },
+    { text: "\"five more minutes\" (it's never five minutes) ⏰", img: "photos/2222.webp" },
+    { text: "the duck. we don't talk about the duck. 🦆", img: "photos/3333.webp" }
   ];
 
   // GALLERY — list every photo you have with her here.
-  // Add as many as you want. caption is optional (use "" for none).
-  // These sampleImg(...) entries are PREVIEW placeholders — replace each one
-  // with your own photo, e.g.  { img:"photos/goa.jpg", caption:"Goa, 2023" }
+  // Add as many as you want. category can be "sweet", "silly", or "chaotic".
   const gallery = [
-    { img:sampleImg(0),  caption:"where it all began" },
-    { img:sampleImg(1),  caption:"that night under the lights" },
-    { img:sampleImg(2),  caption:"our first trip 🌅" },
-    { img:sampleImg(3),  caption:"" },
-    { img:sampleImg(4),  caption:"the beach day" },
-    { img:sampleImg(5),  caption:"my favourite laugh" },
-    { img:sampleImg(6),  caption:"" },
-    { img:sampleImg(7),  caption:"lazy Sunday" },
-    { img:sampleImg(8),  caption:"" },
-    { img:sampleImg(9),  caption:"just us" },
-    { img:sampleImg(10), caption:"the good coffee place" },
-    { img:sampleImg(11), caption:"" },
-    { img:sampleImg(12), caption:"home" },
-    { img:sampleImg(13), caption:"" }
+    // --- Sweet Memories (2-digit files) ---
+    { img: "photos/01.webp", category: "sweet", caption: "where it all began" },
+    { img: "photos/02.webp", category: "sweet", caption: "that night under the lights" },
+    { img: "photos/03.webp", category: "sweet", caption: "our first trip 🌅" },
+    { img: "photos/04.webp", category: "sweet", caption: "beach walk" },
+    { img: "photos/05.webp", category: "sweet", caption: "my favourite laugh" },
+    { img: "photos/06.webp", category: "sweet", caption: "happy day" },
+    { img: "photos/07.webp", category: "sweet", caption: "lazy Sunday" },
+    { img: "photos/08.webp", category: "sweet", caption: "exploring together" },
+    { img: "photos/09.webp", category: "sweet", caption: "just us" },
+    { img: "photos/10.webp", category: "sweet", caption: "the good coffee place" },
+    { img: "photos/11.webp", category: "sweet", caption: "magical sunset" },
+    { img: "photos/12.webp", category: "sweet", caption: "home" },
+
+    // --- Silly Snaps (3-digit files) ---
+    { img: "photos/101.webp", category: "silly", caption: "goofy face #1" },
+    { img: "photos/102.webp", category: "silly", caption: "caught mid-sneeze" },
+    { img: "photos/103.webp", category: "silly", caption: "trying to look cool" },
+    { img: "photos/104.webp", category: "silly", caption: "silly photobomb" },
+    { img: "photos/105.webp", category: "silly", caption: "stolen hoodie" },
+    { img: "photos/106.webp", category: "silly", caption: "late night snack run" },
+    { img: "photos/107.webp", category: "silly", caption: "who wore it better?" },
+    { img: "photos/108.webp", category: "silly", caption: "sleeping halfway through" },
+    { img: "photos/109.webp", category: "silly", caption: "funny filter times" },
+    { img: "photos/110.webp", category: "silly", caption: "kitchen dancing fail" },
+    { img: "photos/111.webp", category: "silly", caption: "the shopping cart race" },
+    { img: "photos/112.webp", category: "silly", caption: "terrible morning face" },
+    { img: "photos/113.webp", category: "silly", caption: "bad hair day champion" },
+    { img: "photos/114.webp", category: "silly", caption: "eating all the popcorn" },
+    { img: "photos/115.webp", category: "silly", caption: "weird poses" },
+    { img: "photos/116.webp", category: "silly", caption: "matching socks fail" },
+    { img: "photos/117.webp", category: "silly", caption: "peace out ✌️" },
+
+    // --- Absolute Chaos (4-digit files) ---
+    { img: "photos/1111.webp", category: "chaotic", caption: "absolute legendary chaos" },
+    { img: "photos/2222.webp", category: "chaotic", caption: "what was happening here?!" },
+    { img: "photos/3333.webp", category: "chaotic", caption: "the ultimate goofball" }
   ];
 
   // gallery layout: "grid" is a wall of framed photos, "heart" arranges them into a heart.
@@ -1101,7 +1197,17 @@
 
     // inside jokes
     document.getElementById("jokes").innerHTML =
-      jokes.map(j=>`<div class="slip">${j}</div>`).join("");
+      jokes.map(j => {
+        const imgHtml = j.img
+          ? `<div class="mini-polaroid" onclick="window.openLightboxFromUrl('${j.img}', '${j.text.replace(/'/g, "\\'")}')">
+               <img src="${j.img}" alt="${j.text}">
+             </div>`
+          : '';
+        return `<div class="slip ${j.img ? 'has-img' : ''}">
+                  <span class="joke-text">${j.text}</span>
+                  ${imgHtml}
+                </div>`;
+      }).join("");
 
     // reply
     document.getElementById("sendReply").addEventListener("click", ()=>{
@@ -1306,69 +1412,97 @@
   // ---- gallery wall + romantic lightbox ----
   (function(){
     const wall = document.getElementById("wall");
-    wall.innerHTML = gallery.map((g,i)=>{
-      const inner = g.img
-        ? `<img src="${g.img}" alt="${g.caption||'us'}" loading="lazy" draggable="false">`
-        : `<div class="empty">add a photo</div>`;
-      const tag = g.caption ? `<div class="tag">${g.caption}</div>` : "";
-      return `<figure class="frame" data-i="${i}">${inner}${tag}</figure>`;
-    }).join("");
+    let activeFilter = "all";
+    let heartLayout;
 
-    const frames = [...wall.querySelectorAll(".frame")];
-    const heartMode = GALLERY_SHAPE === "heart" && frames.length;
+    function renderGallery(isInitial = false) {
+      const filtered = activeFilter === "all" 
+        ? gallery 
+        : gallery.filter(g => g.category === activeFilter);
+        
+      wall.innerHTML = filtered.map((g) => {
+        const globalIndex = gallery.indexOf(g);
+        const inner = g.img
+          ? `<img src="${g.img}" alt="${g.caption||'us'}" loading="lazy" draggable="false">`
+          : `<div class="empty">add a photo</div>`;
+        const tag = g.caption ? `<div class="tag">${g.caption}</div>` : "";
+        return `<figure class="frame" data-i="${globalIndex}">${inner}${tag}</figure>`;
+      }).join("");
 
-    // reveal: heart shows together; grid reveals gently on scroll
-    if(reduce || heartMode){
-      frames.forEach((f,i)=>{
-        if(heartMode && !reduce) f.style.animationDelay = (i*0.32).toFixed(2) + "s"; // offset each float
-        f.classList.add("show");
-      });
-    }
-    else{
-      const io = new IntersectionObserver((es)=>{
-        es.forEach(e=>{ if(e.isIntersecting){
-          const idx = +e.target.dataset.i;
-          e.target.style.transitionDelay = (idx % 3)*0.08 + "s";
-          e.target.classList.add("show"); io.unobserve(e.target);
-        }});
-      }, { threshold:.12 });
-      frames.forEach(f=>io.observe(f));
+      const frames = [...wall.querySelectorAll(".frame")];
+      const heartMode = GALLERY_SHAPE === "heart" && frames.length;
+
+      if (heartMode) {
+        wall.classList.add("heart");
+        heartLayout();
+      } else {
+        wall.classList.remove("heart");
+        // Reset absolute layouts from heart mode
+        frames.forEach(f => {
+          f.style.width = "";
+          f.style.left = "";
+          f.style.top = "";
+        });
+      }
+
+      // Enter transition
+      if (isInitial && !heartMode && !reduce) {
+        // Scroll reveal on load
+        const io = new IntersectionObserver((es)=>{
+          es.forEach(e=>{ if(e.isIntersecting){
+            const idx = +e.target.dataset.i;
+            e.target.style.transitionDelay = (idx % 3)*0.08 + "s";
+            e.target.classList.add("show"); io.unobserve(e.target);
+          }});
+        }, { threshold:.12 });
+        frames.forEach(f=>io.observe(f));
+      } else {
+        // Tab click or heart mode or reduced motion
+        setTimeout(() => {
+          frames.forEach((f, idx) => {
+            if (!reduce && !heartMode) {
+              f.style.transitionDelay = (idx % 3) * 0.05 + "s";
+            }
+            f.classList.add("show");
+          });
+        }, 50);
+      }
+
+      // Re-bind lightbox launch on click
+      frames.forEach(f=> f.addEventListener("click", ()=> openLB(+f.dataset.i)) );
     }
 
     // arrange into a heart (optional)
-    if(heartMode){
-      wall.classList.add("heart");
-      const heartLayout = ()=>{
-        const W = Math.min(wall.clientWidth || wall.offsetWidth || 0, 560);
-        if(W < 60){ requestAnimationFrame(heartLayout); return; }   // wait for real width
-        const N = frames.length;
-        const pts = [];
-        for(let i=0;i<N;i++){
-          const t = (i/N)*Math.PI*2;
-          const x = 16*Math.pow(Math.sin(t),3);
-          const y = -(13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
-          pts.push({x,y});
-        }
-        const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
-        const minX=Math.min(...xs), maxX=Math.max(...xs), minY=Math.min(...ys), maxY=Math.max(...ys);
-        const fr  = Math.max(54, Math.min(96, W/6));
-        const pad = fr/2 + 8;
-        const s   = (W - pad*2) / (maxX - minX);
-        const usedH = (maxY - minY) * s;
-        const offX = pad, offY = pad;
-        frames.forEach((f,i)=>{
-          const cx = offX + (pts[i].x - minX) * s;
-          const cy = offY + (pts[i].y - minY) * s;
-          f.style.width = fr + "px";
-          f.style.left  = (cx - fr/2) + "px";
-          f.style.top   = (cy - fr/2) + "px";
-        });
-        wall.style.height = (usedH + pad*2) + "px";
-      };
-      requestAnimationFrame(heartLayout);
-      window.addEventListener("load", heartLayout);
-      window.addEventListener("resize", heartLayout);
-    }
+    heartLayout = ()=>{
+      const frames = [...wall.querySelectorAll(".frame")];
+      const W = Math.min(wall.clientWidth || wall.offsetWidth || 0, 560);
+      if(W < 60){ requestAnimationFrame(heartLayout); return; }   // wait for real width
+      const N = frames.length;
+      if (N === 0) return;
+      const pts = [];
+      for(let i=0;i<N;i++){
+        const t = (i/N)*Math.PI*2;
+        const x = 16*Math.pow(Math.sin(t),3);
+        const y = -(13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+        pts.push({x,y});
+      }
+      const xs=pts.map(p=>p.x), ys=pts.map(p=>p.y);
+      const minX=Math.min(...xs), maxX=Math.max(...xs), minY=Math.min(...ys), maxY=Math.max(...ys);
+      const fr  = Math.max(54, Math.min(96, W/6));
+      const pad = fr/2 + 8;
+      const s   = (W - pad*2) / (maxX - minX);
+      const usedH = (maxY - minY) * s;
+      const offX = pad, offY = pad;
+      frames.forEach((f,i)=>{
+        const cx = offX + (pts[i].x - minX) * s;
+        const cy = offY + (pts[i].y - minY) * s;
+        f.style.width = fr + "px";
+        f.style.left  = (cx - fr/2) + "px";
+        f.style.top   = (cy - fr/2) + "px";
+        if (!reduce) f.style.animationDelay = (i*0.32).toFixed(2) + "s";
+      });
+      wall.style.height = (usedH + pad*2) + "px";
+    };
 
     // lightbox — simple framed-photo viewer (tap to enlarge, arrows to browse)
     const lb=document.getElementById("lb"), lbImg=document.getElementById("lbImg"),
@@ -1391,7 +1525,38 @@
     function closeLB(){ lb.classList.remove("open"); }
     function next(){ show(cur+1); } function prev(){ show(cur-1); }
 
-    frames.forEach(f=> f.addEventListener("click", ()=> openLB(+f.dataset.i)) );
+    // global lightbox method to open specific single images (like joke details)
+    window.openLightboxFromUrl = function(url, caption){
+      lb.classList.add("open");
+      lbImg.style.opacity = 0;
+      setTimeout(()=>{
+        lbImg.src = url;
+        lbImg.alt = caption;
+        lbCap.textContent = caption;
+        lbCount.textContent = "";
+        lbImg.style.opacity = 1;
+      }, 180);
+    };
+
+    // wire filter button clicks
+    const filterContainer = document.getElementById("galleryFilters");
+    if (filterContainer) {
+      filterContainer.querySelectorAll(".filter-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          filterContainer.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          activeFilter = btn.dataset.filter;
+          renderGallery();
+        });
+      });
+    }
+
+    // initial render
+    renderGallery(true);
+
+    window.addEventListener("load", () => { if(GALLERY_SHAPE === "heart") heartLayout(); });
+    window.addEventListener("resize", () => { if(GALLERY_SHAPE === "heart") heartLayout(); });
+
     document.getElementById("lbNext").onclick = next;
     document.getElementById("lbPrev").onclick = prev;
     document.getElementById("lbClose").onclick = closeLB;

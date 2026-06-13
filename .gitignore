@@ -1,0 +1,9 @@
+# Ignore OS-generated files
+.DS_Store
+Thumbs.db
+
+# Ignore raw unoptimized images
+photos_raw/
+
+# Ignore local Claude IDE settings
+.claude/settings.local.json

@@ -372,6 +372,7 @@
     .transition-page.show{ opacity:1; }
     .quiz-page.show{ opacity:1; }
     .quiz-memory.show{ opacity:1; transform:none; }
+    .main-content.show{ opacity:1; }
   }
 
   /* ---------- countdown page ---------- */
@@ -475,6 +476,7 @@
   }
   .transition-page.show{ opacity:1; pointer-events:auto; }
   .transition-page.hidden{ display:none; }
+  .transition-content{ position:relative; z-index:1; }
   .transition-content h1{
     font-family:"Fraunces",serif; font-weight:400;
     font-size:clamp(2.2rem,7vw,4rem); line-height:1.1; margin-bottom:1.5rem;
@@ -606,10 +608,19 @@
     .quiz-container{ padding:1.8rem 1.5rem; }
     .quiz-nav{ flex-direction:column; gap:1rem; }
   }
+
+  /* ---------- main content hiding ---------- */
+  .main-content{
+    opacity:0; pointer-events:none; transition:opacity .8s ease;
+  }
+  .main-content.show{
+    opacity:1; pointer-events:auto;
+  }
 </style>
 
 <!-- countdown page (hidden after target time) -->
 <div class="countdown-page" id="countdownPage">
+  <div class="hearts countdown-bg-hearts" id="countdownHearts"></div>
   <button class="countdown-skip" id="skipCountdown">skip countdown →</button>
   <div class="countdown-hearts"></div>
   <div class="countdown-intro">
@@ -640,6 +651,7 @@
 
 <!-- transition page after countdown -->
 <div class="transition-page" id="transitionPage">
+  <div class="hearts transition-bg-hearts" id="transitionHearts"></div>
   <div class="transition-content">
     <h1>Happy Birthday!</h1>
     <p>Your special day has arrived! Before we open your Memory Box, let's take a little trip down memory lane together...</p>
@@ -649,6 +661,7 @@
 
 <!-- quiz page -->
 <div class="quiz-page" id="quizPage">
+  <div class="hearts quiz-bg-hearts" id="quizHearts"></div>
   <div class="quiz-container">
     <div class="quiz-header">
       <p class="eyebrow">a little game for us</p>
@@ -669,6 +682,7 @@
   </div>
 </div>
 
+<div class="main-content" id="mainContent">
 <div class="lamp"></div>
 <div class="hearts" id="hearts"></div>
 
@@ -748,6 +762,7 @@
     <p class="lb-count" id="lbCount"></p>
   </div>
 </div>
+</div> <!-- end main-content -->
 
 <script>
   /* --- preview art: makes the sample placeholder images. You can ignore this;
@@ -1065,7 +1080,8 @@
     quizPage.classList.remove("show");
     setTimeout(() => {
       quizPage.classList.add("hidden");
-      // show main memory box content by removing all overlay pages
+      // show main memory box content
+      document.getElementById("mainContent").classList.add("show");
     }, 500);
   }
 
@@ -1246,11 +1262,13 @@
     });
   }
 
-  // ---- drifting hearts ----
-  if(!reduce){
-    const heartsBox = document.getElementById("hearts");
+  // ---- create floating hearts for different containers ----
+  function createFloatingHearts(container, count = 14) {
+    if(reduce || !container) return;
+    
     const SVG = `<svg viewBox="0 0 24 24" width="100%" height="100%" fill="currentColor"><path d="M12 21s-7-4.6-9.3-9C1 8.6 2.7 5.5 6 5.5c1.9 0 3.2 1.1 4 2.3.8-1.2 2.1-2.3 4-2.3 3.3 0 5 3.1 3.3 6.5C19 16.4 12 21 12 21z"/></svg>`;
-    for(let i=0;i<14;i++){
+    
+    for(let i=0;i<count;i++){
       const h = document.createElement("span");
       h.className = "heart";
       const size = 12 + Math.random()*20;
@@ -1259,9 +1277,21 @@
       h.style.animationDuration = (12 + Math.random()*12) + "s";
       h.style.animationDelay = (Math.random()*14) + "s";
       h.innerHTML = SVG;
-      heartsBox.appendChild(h);
+      container.appendChild(h);
     }
   }
+
+  // drifting hearts for main page
+  createFloatingHearts(document.getElementById("hearts"), 30);
+  
+  // more hearts for countdown page (45 hearts)
+  createFloatingHearts(document.getElementById("countdownHearts"), 45);
+
+  // hearts for transition page (45 hearts)
+  createFloatingHearts(document.getElementById("transitionHearts"), 45);
+  
+  // hearts for quiz page (40 hearts)
+  createFloatingHearts(document.getElementById("quizHearts"), 40);
 
   // ---- reveal written sections + finale on scroll ----
   if(reduce){

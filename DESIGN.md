@@ -63,7 +63,9 @@ One orchestrated, romantic sequence rather than scattered effects. Everything be
 |---|---|---|
 | **Pre-Experience Animations:** | | |
 | Countdown numbers | Timer units | Real-time updates with smooth number transitions, gradient text. |
-| Floating hearts | Countdown/Transition | Gentle floating hearts around countdown display and transition page. |
+| Floating hearts (45) | Countdown page background | Enhanced romantic atmosphere with dense floating hearts during countdown. |
+| Floating hearts (45) | Transition page background | Continuous hearts animation on transition screen background. |
+| Floating hearts (40) | Quiz page background | Continuous hearts animation throughout quiz experience. |
 | Countdown hearts pulse | Timer decorations | Soft pulsing hearts with offset timing for organic feel. |
 | Page transitions | Between stages | Smooth opacity fades between countdown → transition → quiz → main box. |
 | Quiz memory reveal | After answer selection | Memory note slides up with gentle fade-in after correct answer. |
@@ -71,7 +73,7 @@ One orchestrated, romantic sequence rather than scattered effects. Everything be
 | Develop-in | Polaroids on load | Photos fade up and brighten from dim, like a developing Polaroid, staggered. |
 | Self-drawing thread | Red thread on load | Stroke draws itself across the memories once. |
 | Breathing lamp | Background glow | Slow swell/fade of the candlelight pool. |
-| Drifting hearts | Background | Sparse, low-opacity hearts float upward as ambience. |
+| Drifting hearts (30) | Background | Dense, low-opacity hearts float upward as ambience. |
 | Scroll reveals | `.written` / `.finale` / grid frames | Sections and framed photos rise + fade in on entry. |
 | Hover lift | Framed photos | Frame lifts and the photo zooms slightly on hover. |
 | Beating seal | Finale heart | Gentle double-thump heartbeat. |

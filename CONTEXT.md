@@ -27,8 +27,8 @@ Fully working and populated with **sample content** (illustrated placeholder ima
 5. **The desk** — draggable Polaroid photos scattered on a dark desk, connected by a red "thread of fate." Tap a photo to lift it and read the memory.
 6. **Things I love about you** — sticky notes.
 7. **This year, I hope we…** — wishes for the year ahead.
-8. **Our inside jokes** — kraft-paper slips.
-9. **Us, in pictures** — every photo shown as a framed print on a wall. Tap any photo to open a full-screen viewer with previous/next arrows (and keyboard ← / →) and a soft cross-fade between images. The arrangement defaults to a tidy grid; an optional heart layout is available via a switch.
+8. **Our inside jokes** — kraft-paper slips. If an image is attached, a mini-polaroid is taped to the slip. Clicking it opens it in the lightbox.
+9. **Us, in pictures** — every photo shown as a framed print on a wall, with category filters (sweet, silly, chaotic) and a staggered fade animation. Tap any photo to open a full-screen viewer with previous/next arrows (and keyboard ← / →) and a soft cross-fade between images. The arrangement defaults to a tidy grid; an optional heart layout is available via a switch.
 10. **An open letter** — a longer written message on a taped sheet of paper.
 11. **Write me back** — a reply box; her message opens a prefilled email or WhatsApp addressed to the giver.
 12. **Finale** — a beating heart seal + closing line.
@@ -39,18 +39,20 @@ Fully working and populated with **sample content** (illustrated placeholder ima
 
 ```
 your-folder/
-├── memory-box.html        ← the site
-└── photos/                ← the giver's real images
-    ├── first-date.jpg
-    ├── goa.jpg
+├── memory-box.html        ← the site (rename to index.html for Vercel)
+├── optimize_photos.py     ← python script to optimize photos
+├── photos_raw/            ← your raw, unoptimized images (ignored in git)
+└── photos/                ← WebP optimized images used by the site
+    ├── 01.webp
+    ├── 101.webp
+    ├── 1111.webp
     └── ...
 ```
-
-Sample images are generated in-code, so `photos/` is only needed once real photos are added.
 
 ## Hosting
 
 Free options, no account complexity:
+- **Vercel** — import repository, deploys automatically (rename `memory-box.html` to `index.html` first).
 - **Netlify Drop** (`app.netlify.com/drop`) — drag the HTML file (plus `photos/` folder) to get an instant shareable link.
 - **GitHub Pages** — commit the file and enable Pages.
 

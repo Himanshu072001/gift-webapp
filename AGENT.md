@@ -4,15 +4,16 @@ Operating manual for any AI agent working in this repository. For Claude-specifi
 
 ## Project at a glance
 
-- **Type:** static, single-file web page (`memory-box.html`).
+- **Type:** static, single-file web page (`memory-box.html` or `index.html` for Vercel).
 - **Stack:** plain HTML + CSS + vanilla JS, Google Fonts via CDN link. No framework, no build, no package manager, no server.
-- **Run:** open `memory-box.html` in any modern browser (works from `file://`).
-- **Deploy:** drag to Netlify Drop, or push to GitHub Pages. Ship the HTML file plus the `photos/` folder.
+- **Run:** open the HTML file in any modern browser (works from `file://`).
+- **Deploy:** drag to Netlify Drop, push to GitHub Pages, or import to Vercel (rename to `index.html`). Ship the HTML file plus the `photos/` folder.
 
 ## Repository conventions
 
 - **Single source file.** Do not introduce additional source files, modules, or a bundler. CSS and JS stay inline.
 - **No dependencies.** No `npm install`, no CDN scripts beyond the Google Fonts stylesheet. If a feature seems to need a library, implement it with platform APIs instead.
+- **Photo optimization.** Run `python3 optimize_photos.py` to convert and optimize raw images from `photos_raw/` into WebP format inside `photos/` (categorized by filename length).
 - **Content vs. code separation.** Everything a human personalizes lives in the `EDIT THIS` block as commented constants. Logic lives below it. Never mix hard-coded user content into the logic.
 - **Comments are UX.** The comments in the edit block are the closest thing this project has to a UI for the editor. Keep them short, friendly, and show a concrete example for any non-obvious field.
 

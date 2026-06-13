@@ -22,8 +22,8 @@ All personalization is driven by these constants near the top of the `<script>`:
 | `LETTER` | `{ dear, body:[paragraphs], sign }`. |
 | `loves[]` | Sticky-note strings. |
 | `wishes[]` | Wishes-list strings. |
-| `jokes[]` | Inside-joke strings. |
-| `gallery[]` | `{ img, caption }`; caption optional. |
+| `jokes[]` | Inside-joke objects: `{ text, img }` (img maps to a funniest 4-digit photo, which renders as a mini Polaroid taped to the joke). |
+| `gallery[]` | Photos list: `{ img, category: "sweet"|"silly"|"chaotic", caption }` |
 | `GALLERY_SHAPE` | `"grid"` (framed wall, default) or `"heart"`. |
 | `quizQuestions[]` | Quiz questions: `{ question, options:[4 choices], correct:index, memory:"sweet note" }`. |
 | `REPLY_TO` | `{ method:"email"|"whatsapp", to }`. |
@@ -44,9 +44,9 @@ All personalization is driven by these constants near the top of the `<script>`:
 
 ## The gallery ("Us, in pictures")
 
-- Default `GALLERY_SHAPE = "grid"`: a CSS-columns masonry wall of framed photos. Frames reveal with a gentle fade-up on scroll and lift on hover.
+- Default `GALLERY_SHAPE = "grid"`: a CSS-columns masonry wall of framed photos with filter tabs ("show all", "sweet memories", "silly snaps", "absolute chaos") and a staggered entrance transition.
 - Optional `GALLERY_SHAPE = "heart"`: frames are positioned absolutely along a parametric heart curve by `heartLayout()`. In heart mode the photos float (`floatPhoto`) and the whole heart beats (`heartThrob`); these animations are scoped to `.wall.heart` and don't run in grid mode.
-- The lightbox is a **simple viewer**: tap a frame to enlarge, previous/next arrows + keyboard ← / →, cross-fade between images, Escape/backdrop to close. There is intentionally **no** slideshow auto-play, no idle screensaver, and no constant Ken-Burns zoom — keep it that way unless asked.
+- The lightbox is a **simple viewer**: tap a frame (or inside joke mini-polaroid) to enlarge, previous/next arrows + keyboard ← / →, cross-fade between images, Escape/backdrop to close. There is intentionally **no** slideshow auto-play, no idle screensaver, and no constant Ken-Burns zoom — keep it that way unless asked.
 
 ## Known sharp edges
 

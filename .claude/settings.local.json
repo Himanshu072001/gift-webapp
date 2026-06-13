@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__hyper__connect",
+      "Bash(git init)",
+      "Bash(git remote add origin https://github.com/Himanshu072001/gift-webapp.git)",
+      "Bash(git add .)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

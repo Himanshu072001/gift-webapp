@@ -44,14 +44,15 @@ All personalization is driven by these constants near the top of the `<script>`:
 
 ## The gallery ("Us, in pictures")
 
-- Default `GALLERY_SHAPE = "grid"`: a CSS-columns masonry wall of framed photos with filter tabs ("show all", "sweet memories", "silly snaps", "absolute chaos") and a staggered entrance transition.
-- Optional `GALLERY_SHAPE = "heart"`: frames are positioned absolutely along a parametric heart curve by `heartLayout()`. In heart mode the photos float (`floatPhoto`) and the whole heart beats (`heartThrob`); these animations are scoped to `.wall.heart` and don't run in grid mode.
+- `GALLERY_SHAPE = "grid"`: a CSS-columns masonry wall of framed photos with filter tabs ("show all", "sweet memories", "silly snaps", "absolute chaos") and a staggered entrance transition.
+- **Heart layout currently disabled**: The optional heart layout (`GALLERY_SHAPE = "heart"`) is commented out due to visibility issues. The CSS and JavaScript for heart layout are preserved in comments and can be re-enabled after fixing the frame visibility problems.
 - The lightbox is a **simple viewer**: tap a frame (or inside joke mini-polaroid) to enlarge, previous/next arrows + keyboard ← / →, cross-fade between images, Escape/backdrop to close. There is intentionally **no** slideshow auto-play, no idle screensaver, and no constant Ken-Burns zoom — keep it that way unless asked.
 
 ## Known sharp edges
 
-- **Layout timing:** the desk (`layout()`) and the heart (`heartLayout()`, heart mode only) position elements absolutely from measured widths. Call them on `load` and `resize`, and guard against a zero/too-small width (the heart already does a `requestAnimationFrame` retry). After any change that affects element sizes, re-run layout.
-- **Heart visibility (heart mode):** heart-mode frames are revealed immediately (not via the scroll observer) because the observer was unreliable for the clustered, absolutely-positioned frames. Keep that behavior.
+- **Layout timing:** the desk (`layout()`) positions elements absolutely from measured widths. Call it on `load` and `resize`, and guard against a zero/too-small width. After any change that affects element sizes, re-run layout.
+- **Heart layout disabled:** The heart layout feature is currently commented out due to frame visibility issues. The positioning calculations work correctly, but frames remain invisible despite having the `.show` class. This appears to be related to CSS specificity or browser security restrictions with fallback images.
+- **`sampleImg` security:** When loading the HTML file directly (file://), browser security prevents data URI fallback images from loading, causing gallery frames to appear empty. This is resolved when the site is served via HTTP(S).
 - **`sampleImg` IDs:** each SVG uses `id="g"` for its gradient. That's fine because each data-URI is its own isolated document; don't "fix" it by sharing one gradient.
 
 ## How to verify a change

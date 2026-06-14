@@ -29,7 +29,7 @@ Fully working and populated with **sample content** (illustrated placeholder ima
 6. **Things I love about you** — sticky notes.
 7. **This year, I hope we…** — wishes for the year ahead.
 8. **Our inside jokes** — kraft-paper slips. If an image is attached, a mini-polaroid is taped to the slip. Clicking it opens it in the lightbox.
-9. **Us, in pictures** — every photo shown as a framed print on a wall, with category filters (sweet, silly, chaotic) and a staggered fade animation. Tap any photo to open a full-screen viewer with previous/next arrows (and keyboard ← / →) and a soft cross-fade between images. The arrangement defaults to a tidy grid; an optional heart layout is available via a switch.
+9. **Us, in pictures** — every photo shown as a framed print on a wall, with category filters (sweet, silly, chaotic) and a staggered fade animation. Tap any photo to open a full-screen viewer with previous/next arrows (and keyboard ← / →) and a soft cross-fade between images. The photos are arranged in a tidy grid layout.
 10. **An open letter** — a longer written message on a taped sheet of paper.
 11. **Write me back** — a reply box; her message opens a prefilled email or WhatsApp addressed to the giver.
 12. **Finale** — a beating heart seal + closing line.

@@ -25,6 +25,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Memory Box</title>
+
+<!-- Vercel Analytics -->
+<script>
+  window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..500;1,9..144,300..400&family=Karla:wght@300;400&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -2122,6 +2129,10 @@
   if(new Date().getTime() >= targetDate){
     countdownPage.classList.add("hidden");
     clearInterval(countdownInterval);
+    // Track countdown completion
+    if (typeof window.va === 'function') {
+      window.va('track', 'countdown_completed', { method: 'timer_expired' });
+    }
     setTimeout(() => {
       document.getElementById("transitionPage").classList.add("show");
     }, 500);
@@ -2131,6 +2142,10 @@
   document.getElementById("skipCountdown").addEventListener("click", function(){
     countdownPage.classList.add("hidden");
     clearInterval(countdownInterval);
+    // Track countdown skip
+    if (typeof window.va === 'function') {
+      window.va('track', 'countdown_completed', { method: 'skip_button' });
+    }
     setTimeout(() => {
       document.getElementById("transitionPage").classList.add("show");
     }, 500);
@@ -2716,6 +2731,15 @@
       // show main memory box content
       document.getElementById("mainContent").classList.add("show");
       
+      // Track quiz completion and main content access
+      if (typeof window.va === 'function') {
+        window.va('track', 'quiz_completed', { 
+          total_questions: quizQuestions.length,
+          correct_answers: userAnswers.filter((answer, index) => answer === quizQuestions[index].correct).length 
+        });
+        window.va('track', 'memory_box_accessed');
+      }
+      
       // Enable body scrolling and ensure we are at the top
       document.body.classList.remove("no-scroll");
       window.scrollTo(0, 0);
@@ -2984,6 +3008,11 @@
     el.style.zIndex = ++zTop;
     drag = { s, startX:e.clientX, startY:e.clientY, ox:e.clientX - s.x, oy:e.clientY - s.y, moved:false };
     el.setPointerCapture(e.pointerId);
+    
+    // Track photo drag start
+    if (typeof window.va === 'function') {
+      window.va('track', 'photo_drag_started', { photo_index: parseInt(el.dataset.i) });
+    }
   }
   function move(e){
     if(!drag) return;
@@ -3019,6 +3048,14 @@
        <button class="close">put it back ↩</button>`;
     overlay.classList.add("open");
     card.querySelector(".close").onclick = close;
+    
+    // Track photo memory view
+    if (typeof window.va === 'function') {
+      window.va('track', 'photo_memory_opened', { 
+        photo_index: i,
+        memory_title: m.title 
+      });
+    }
   }
   function close(){ overlay.classList.remove("open"); }
   overlay.addEventListener("click", e=>{ if(e.target===overlay) close(); });
@@ -3468,8 +3505,103 @@
     });
   }
 
+  // Vercel Analytics tracking for Memory Box interactions
+  function trackEvent(eventName, properties = {}) {
+    if (typeof window.va === 'function') {
+      window.va('track', eventName, properties);
+    }
+  }
+
+  // Track key Memory Box milestones
+  function initAnalytics() {
+    // Track countdown completion
+    setTimeout(() => {
+      trackEvent('countdown_started', { duration: '60_seconds' });
+    }, 1000);
+
+    // Track quiz interactions
+    const quizOptions = document.querySelectorAll('.option');
+    quizOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        trackEvent('quiz_answer_selected', { 
+          question: currentQuestionIndex + 1,
+          total_questions: quizQuestions.length 
+        });
+      });
+    });
+
+    // Track romantic highlight interactions
+    setTimeout(() => {
+      const highlights = document.querySelectorAll('.romantic-highlight');
+      highlights.forEach((highlight, index) => {
+        highlight.addEventListener('mouseenter', () => {
+          trackEvent('romantic_highlight_hovered', { highlight_index: index });
+        });
+        highlight.addEventListener('click', () => {
+          trackEvent('floating_hearts_triggered', { highlight_index: index });
+        });
+      });
+    }, 2000);
+
+    // Track flashcard interactions
+    setTimeout(() => {
+      const flashcards = document.querySelectorAll('.flashcard');
+      flashcards.forEach((card, index) => {
+        card.addEventListener('click', () => {
+          trackEvent('flashcard_flipped', { card_index: index });
+        });
+      });
+
+      // Track navigation
+      document.getElementById('nextBtn')?.addEventListener('click', () => {
+        trackEvent('flashcard_navigation', { direction: 'next', current_card: currentCardIndex });
+      });
+      document.getElementById('prevBtn')?.addEventListener('click', () => {
+        trackEvent('flashcard_navigation', { direction: 'previous', current_card: currentCardIndex });
+      });
+    }, 3000);
+
+    // Track gallery interactions
+    setTimeout(() => {
+      const frames = document.querySelectorAll('.frame');
+      frames.forEach((frame, index) => {
+        frame.addEventListener('click', () => {
+          trackEvent('photo_gallery_opened', { photo_index: index });
+        });
+      });
+
+      // Track filter usage
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          trackEvent('gallery_filter_used', { filter: btn.dataset.filter });
+        });
+      });
+    }, 4000);
+
+    // Track major milestones
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const sectionName = entry.target.querySelector('h2')?.textContent || 'unknown_section';
+          trackEvent('section_viewed', { section: sectionName });
+        }
+      });
+    }, { threshold: 0.5 });
+
+    // Observe all major sections
+    setTimeout(() => {
+      document.querySelectorAll('.written').forEach(section => {
+        observer.observe(section);
+      });
+    }, 5000);
+  }
+
   // Initialize bear interactions immediately
   initTeddyBears();
+  
+  // Initialize analytics tracking
+  initAnalytics();
 
   // Letter romantic animations
   function addLetterAnimations() {

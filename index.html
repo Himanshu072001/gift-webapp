@@ -406,14 +406,111 @@
     position:relative;
     background-image:linear-gradient(rgba(120,110,95,.10) 1px, transparent 1px);
     background-size:100% 2.1rem; background-position:0 2.6rem;
+    animation: letterBreathe 4s ease-in-out infinite alternate;
+    transition: all 0.3s ease;
+  }
+  .letter:hover {
+    transform: rotate(0deg) scale(1.02);
+    box-shadow: 0 30px 70px -24px rgba(0,0,0,.8), 0 4px 12px rgba(0,0,0,.4);
+  }
+  @keyframes letterBreathe {
+    0% { transform: rotate(-.6deg) scale(1); }
+    100% { transform: rotate(-.4deg) scale(1.005); }
   }
   .letter::before{ /* tape at top */
     content:""; position:absolute; top:-13px; left:50%; transform:translateX(-50%) rotate(2deg);
     width:96px; height:28px; background:rgba(255,236,179,.42); box-shadow:0 1px 3px rgba(0,0,0,.25);
   }
-  .letter .dear{ font-family:"Caveat",cursive; font-size:1.9rem; color:var(--thread); margin-bottom:.6rem; }
-  .letter p{ font-family:"Karla",sans-serif; font-size:1.06rem; line-height:2.1rem; margin-bottom:1.1rem; color:#473f35; }
-  .letter .sign{ font-family:"Caveat",cursive; font-size:1.8rem; color:var(--thread); margin-top:1.4rem; }
+  .letter .dear{ 
+    font-family:"Caveat",cursive; font-size:1.9rem; color:var(--thread); margin-bottom:.6rem;
+    animation: fadeInUp 1s ease 0.5s both;
+  }
+  .letter p{ 
+    font-family:"Karla",sans-serif; font-size:1.06rem; line-height:2.1rem; 
+    margin-bottom:1.1rem; color:#473f35;
+    animation: fadeInUp 0.8s ease both;
+    opacity: 0;
+  }
+  .letter .sign{ 
+    font-family:"Caveat",cursive; font-size:1.8rem; color:var(--thread); margin-top:1.4rem;
+    animation: fadeInUp 1s ease both;
+    opacity: 0;
+  }
+  /* Romantic highlight effects */
+  .romantic-highlight {
+    background: linear-gradient(120deg, rgba(197,54,43,0.1) 0%, rgba(197,54,43,0.3) 50%, rgba(197,54,43,0.1) 100%);
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-weight: 500;
+    color: var(--thread);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+  }
+  .romantic-highlight:hover {
+    background: linear-gradient(120deg, rgba(197,54,43,0.2) 0%, rgba(197,54,43,0.4) 50%, rgba(197,54,43,0.2) 100%);
+    transform: scale(1.05);
+    text-shadow: 0 0 8px rgba(197,54,43,0.3);
+  }
+  .romantic-highlight::after {
+    content: '💖';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    pointer-events: none;
+  }
+  .romantic-highlight:hover::after {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+    top: -25px;
+  }
+  /* Floating hearts animation */
+  .letter-hearts {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 9999;
+  }
+  .floating-heart {
+    position: absolute;
+    font-size: 14px;
+    color: #ff9db4;
+    animation: floatUp 1.5s ease-out forwards;
+    opacity: 0;
+    filter: drop-shadow(0 0 8px rgba(255, 157, 180, 0.4));
+  }
+  @keyframes floatUp {
+    0% { 
+      opacity: 1;
+      transform: translateY(0px) scale(0.8) rotate(0deg);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(-50vh) scale(1.2) rotate(15deg);
+    }
+    100% { 
+      opacity: 0.8;
+      transform: translateY(-100vh) scale(0.9) rotate(30deg);
+    }
+  }
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 
   /* Enhanced letter styles from letter.html */
   .letter-card {
@@ -1088,6 +1185,10 @@
     .flashcard-face::before{ animation:none !important; }
     .dot.active::before{ animation:none !important; }
     .love-line{ animation:none !important; transform:none !important; }
+    .letter{ animation:none !important; }
+    .letter p, .letter .dear, .letter .sign{ animation:none !important; opacity:1 !important; }
+    .romantic-highlight{ transition:none !important; }
+    .floating-heart{ animation:none !important; display:none !important; }
     .hearts, .lamp{ display:none; }
     .countdown-hearts{ display:none; }
     .transition-page.show{ opacity:1; }
@@ -1844,7 +1945,7 @@
       "Happy Birthday to the girl who walked into a coffee shop one nervous afternoon and somehow walked right into my entire life. I still don't think you fully realise what you did that day.",
       "The 3rd of May, 2025. Both of us nervous, both of us pretending we weren't. That one cup of coffee started video calls that went on for hours, conversations that felt like home, and a feeling I couldn't quite name but didn't want to let go of.",
       "Then life paused — the way life sometimes does. But I've always believed that God has a plan, and when nothing made sense, I held on to that faith — and it brought us back to each other on the 28th of September. I truly believe He had a hand in this. Because some things are just too perfectly timed to be accidental.",
-      "And then the 9th of March — our roka — the day I could say in front of everyone: she's the one. She was always the one. Now we wait for the day we get married, and honestly? I'd wait forever. Though I'd prefer sooner. 😄",
+      "And then the 9th of March — the day I could say in front of everyone: she's the one. She was always the one. Now we wait for the day we get married, and honestly? I'd wait forever. Though I'd prefer sooner. 😄",
       "Ankita, the way you make me feel at home — not in a house, but in a feeling — that is something no one else has ever given me. Your smile, the way you laugh at things that probably shouldn't be that funny, the warmth you carry everywhere you go — I am so lucky that nervous coffee shop date didn't go wrong.",
       "On your birthday, I don't just want to wish you happiness. I want to promise you every ordinary evening, every cold coffee refill, every scoop of ice cream you absolutely need right now — I'll be there for all of it. Especially the ice cream emergencies.",
       "And about that weight you've been worried about lately? Let me clear this up officially: You are not gaining weight. You are gaining me. That's right. Every extra bit? That's just love. My love, to be specific. It's very dense. Very warm. Completely calorie-free. You are perfect. You have always been perfect.",
@@ -2630,6 +2731,7 @@
   (function(){
     const L = document.getElementById("letter");
     L.innerHTML = `
+      <div class="letter-hearts"></div>
       <div class="letter-card">
         <div class="letter-petal letter-petal-1">🌸</div>
         <div class="letter-petal letter-petal-2">🌺</div>
@@ -2641,7 +2743,7 @@
         <p class="letter-body-text">
           Happy Birthday to the girl who walked into a coffee shop one nervous afternoon 
           and somehow walked right into my entire life. 
-          <span class="letter-highlight">I still don't think you fully realise what you did that day.</span>
+          <span class="romantic-highlight">I still don't think you fully realise what you did that day.</span>
         </p>
         
         <p class="letter-body-text">
@@ -2656,15 +2758,15 @@
           Then life paused — the way life sometimes does. 
           But I've always believed that God has a plan, 
           and when nothing made sense, 
-          <span class="letter-highlight">I held on to that faith — and it brought us back to each other on the 28th of September.</span> 
+          <span class="romantic-highlight">I held on to that faith — and it brought us back to each other on the 28th of September.</span> 
           I truly believe He had a hand in this. 
           Because some things are just too perfectly timed to be accidental.
         </p>
         
         <p class="letter-body-text">
-          And then the 9th of March — our roka — 
+          And then the 9th of March — 
           the day I could say in front of everyone: 
-          <span class="letter-highlight">she's the one. She was always the one.</span>
+          <span class="romantic-highlight">she's the one. She was always the one.</span>
           Now we wait for the day we get married, 
           and honestly? I'd wait forever. 
           Though I'd prefer sooner. 😄
@@ -2677,14 +2779,14 @@
           but in a feeling — that is something no one else has ever given me. 
           Your smile, the way you laugh at things that probably shouldn't be that funny, 
           the warmth you carry everywhere you go — 
-          <span class="letter-highlight">I am so lucky that nervous coffee shop date didn't go wrong.</span>
+          <span class="romantic-highlight">I am so lucky that nervous coffee shop date didn't go wrong.</span>
         </p>
         
         <p class="letter-body-text">
           On your birthday, I don't just want to wish you happiness. 
           I want to promise you every ordinary evening, 
           every cold coffee refill, every scoop of ice cream you absolutely <em>need</em> right now — 
-          <span class="letter-highlight">I'll be there for all of it. Especially the ice cream emergencies.</span>
+          <span class="romantic-highlight">I'll be there for all of it. Especially the ice cream emergencies.</span>
         </p>
         
         <hr class="letter-divider">
@@ -2692,24 +2794,29 @@
         <div class="letter-funny-box">
           <div class="letter-funny-title">🎂 A very serious weight update</div>
           That weighing machine is lying. I don't trust it. You shouldn't either. It's a machine. Ignore it.<br><br>
-          Because scientifically speaking — <span class="letter-highlight">you are not gaining weight. You are gaining <em>me.</em></span><br><br>
+          Because scientifically speaking — <span class="romantic-highlight">you are not gaining weight. You are gaining <em>me.</em></span><br><br>
           Every extra bit? Just love. My love. Very dense. Very warm. 
           Completely calorie-free — unlike the cold coffees and ice creams, 
           which I'm not saying are responsible, but I'm also not <em>not</em> saying that. 🍦☕😂<br><br>
           You are perfect. Always have been. And anyone who says otherwise — including that lying machine on your bathroom floor — will have to answer to me.<br><br>
-          <span class="letter-highlight">Case closed. 💛</span>
+          <span class="romantic-highlight">Case closed. 💛</span>
         </div>
         
         <div class="letter-closing">
           Happy Birthday, my favourite person. 
           Here's to every memory we've made and every one still waiting for us. 
-          <span class="letter-highlight">I love you — cold coffees, ice cream cravings, nervous first meetings and all.</span><br><br>
+          <span class="romantic-highlight">I love you — cold coffees, ice cream cravings, nervous first meetings and all.</span><br><br>
           Always and completely yours,<br>
           <span class="letter-signature">Tumhara 💛</span>
         </div>
         
         <div class="letter-hearts-footer">♥ ♥ ♥</div>
       </div>`;
+    
+    // Add romantic animations after content loads
+    setTimeout(() => {
+      addLetterAnimations();
+    }, 100);
     document.getElementById("notes").innerHTML =
       loves.map(t=>`<div class="note-sticky">${t}</div>`).join("");
     
@@ -3362,6 +3469,58 @@
 
   // Initialize bear interactions immediately
   initTeddyBears();
+
+  // Letter romantic animations
+  function addLetterAnimations() {
+    const letter = document.querySelector('.letter');
+    const letterHearts = document.querySelector('.letter-hearts');
+    const highlights = document.querySelectorAll('.romantic-highlight');
+    const paragraphs = document.querySelectorAll('.letter p, .letter .letter-salutation, .letter .letter-signature');
+    
+    if (!letter || reduce) return;
+    
+    // Staggered fade-in animation for paragraphs
+    paragraphs.forEach((p, i) => {
+      p.style.animationDelay = (i * 0.3) + 's';
+    });
+    
+    // Add floating hearts on romantic highlight interactions
+    highlights.forEach(highlight => {
+      highlight.addEventListener('mouseenter', createFloatingHearts);
+      highlight.addEventListener('click', createFloatingHearts);
+    });
+    
+    function createFloatingHearts(e) {
+      if (!letterHearts || reduce) return;
+      
+      const rect = e.target.getBoundingClientRect();
+      const hearts = ['💖', '💕', '💗', '💓', '💝'];
+      
+      for (let i = 0; i < 3; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'floating-heart';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        
+        // Position hearts at the bottom of the highlighted text using viewport coordinates
+        const startX = rect.left + (rect.width / 2) + (Math.random() - 0.5) * rect.width;
+        const startY = rect.bottom - 5; // Start from bottom of text in viewport
+        
+        heart.style.left = startX + 'px';
+        heart.style.top = startY + 'px';
+        heart.style.animationDelay = (i * 0.15) + 's';
+        heart.style.animationDuration = (3 + Math.random() * 2) + 's'; // Longer duration for full screen travel
+        
+        letterHearts.appendChild(heart);
+        
+        // Remove heart after animation
+        setTimeout(() => {
+          if (heart.parentNode) {
+            heart.parentNode.removeChild(heart);
+          }
+        }, 6000);
+      }
+    }
+  }
 
   // flashcard navigation
   let currentCardIndex = 0;

@@ -525,26 +525,294 @@
     .letter-funny-title { color: #e2a87e; }
   }
 
-  /* sticky notes */
-  .notes{ display:flex; flex-wrap:wrap; gap:1.2rem; justify-content:center; }
+  /* sticky notes with thread connections */
+  .notes{ 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 2rem 1.5rem; 
+    justify-items: center;
+    padding: 2rem 0;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .notes::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+  
+  /* confessions - swipeable flashcard carousel */
+  .confessions-grid {
+    position: relative;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    overflow: hidden;
+    perspective: 1000px;
+    padding: 2rem 0;
+  }
+  .flashcard-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .flashcard {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    cursor: pointer;
+    flex-shrink: 0;
+    animation: cardEntrance 0.6s ease-out;
+  }
+  .flashcard.flipped {
+    transform: rotateY(180deg);
+  }
+  .flashcard:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+  }
+  .flashcard.flipped:hover {
+    transform: rotateY(180deg) translateY(-5px) scale(1.02);
+  }
+  @keyframes cardEntrance {
+    0% { 
+      opacity: 0;
+      transform: translateY(20px) scale(0.9);
+    }
+    100% { 
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+  .flashcard-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    padding: 2rem 1.8rem;
+    font-family: "Caveat", cursive;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    color: var(--pencil);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12), 0 3px 10px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+  }
+  .flashcard-face::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    border-radius: 16px;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+  }
+  .flashcard:hover .flashcard-face::before {
+    opacity: 1;
+    animation: shimmer 1.5s ease-in-out;
+  }
+  @keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .flashcard-front {
+    background: #f8f5f0;
+    border: 1px solid rgba(243, 236, 224, 0.4);
+  }
+  .flashcard-back {
+    background: #fff6ea;
+    border: 1px solid rgba(243, 236, 224, 0.5);
+    transform: rotateY(180deg);
+  }
+  .flashcard:hover .flashcard-face {
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12), 0 3px 8px rgba(0,0,0,0.15);
+  }
+  .flashcard:nth-child(even) .flashcard-front {
+    background: #fff6ea;
+  }
+  .flashcard:nth-child(even) .flashcard-back {
+    background: #f8f5f0;
+  }
+  .flashcard:nth-child(3n) .flashcard-front {
+    background: #fef7f0;
+  }
+  .flashcard:nth-child(3n) .flashcard-back {
+    background: #f0f8f0;
+  }
+  .flashcard:nth-child(4n) .flashcard-front {
+    background: #f0f8f0;
+  }
+  .flashcard:nth-child(4n) .flashcard-back {
+    background: #fef7f0;
+  }
+  
+  /* swipe navigation */
+  .flashcard-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    gap: 1rem;
+  }
+  .nav-btn {
+    background: rgba(243, 236, 224, 0.8);
+    border: 1px solid rgba(243, 236, 224, 0.6);
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    font-size: 1.3rem;
+    color: var(--pencil);
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--lamp) 0%, transparent 70%);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.4s ease;
+  }
+  .nav-btn:hover {
+    background: var(--lamp);
+    border-color: var(--lamp);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(255,215,154,0.4), 0 4px 12px rgba(197,54,43,0.2);
+  }
+  .nav-btn:hover::before {
+    opacity: 0.3;
+    transform: scale(1.2);
+  }
+  .nav-btn:active {
+    transform: translateY(-1px) scale(0.98);
+  }
+  .nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .nav-btn:disabled::before {
+    display: none;
+  }
+  .card-indicator {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    font-family: "Karla", sans-serif;
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+  .indicator-dots {
+    display: flex;
+    gap: 0.4rem;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(243, 236, 224, 0.4);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    cursor: pointer;
+    position: relative;
+  }
+  .dot::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--thread-glow) 0%, transparent 60%);
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.4s ease;
+  }
+  .dot.active {
+    background: var(--thread-glow);
+    transform: scale(1.3);
+    box-shadow: 0 0 12px rgba(197,54,43,0.4);
+  }
+  .dot.active::before {
+    opacity: 0.3;
+    transform: scale(1);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .dot:hover:not(.active) {
+    background: rgba(197,54,43,0.6);
+    transform: scale(1.1);
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.2); }
+  }
+  
+  /* animated love line */
+  .love-line {
+    display: inline-block;
+    color: var(--thread-glow);
+    font-style: italic;
+    animation: heartPulse 2s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes heartPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
   .note-sticky{
-    width:160px; min-height:160px; padding:1.1rem 1rem;
-    font-family:"Caveat",cursive; font-size:1.45rem; line-height:1.25; color:#3a342c;
-    box-shadow:0 14px 26px -12px rgba(0,0,0,.6);
-    display:flex; align-items:center; text-align:center; justify-content:center;
+    width: 180px; 
+    min-height: 160px; 
+    padding: 1.3rem 1.1rem;
+    font-family: "Caveat", cursive; 
+    font-size: 1.25rem; 
+    line-height: 1.35; 
+    color: #3a342c;
+    box-shadow: 0 12px 24px -8px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.1);
+    display: flex; 
+    align-items: center; 
+    text-align: center; 
+    justify-content: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     will-change: transform, box-shadow;
+    border-radius: 3px;
+    position: relative;
+    z-index: 2;
   }
   .note-sticky:hover {
-    transform: scale(1.1) rotate(0deg) translateY(-8px) !important;
-    box-shadow: 0 24px 38px -10px rgba(0,0,0,0.7);
-    z-index: 5;
+    transform: scale(1.05) rotate(0deg) translateY(-10px) !important;
+    box-shadow: 0 20px 40px -10px rgba(0,0,0,.5), 0 8px 20px rgba(0,0,0,.2);
+    z-index: 10;
     animation: none !important;
   }
-  .note-sticky:nth-child(4n+1){ background:#f6e29a; transform:rotate(-3deg); animation: sticky-float-1 5s ease-in-out infinite alternate; }
-  .note-sticky:nth-child(4n+2){ background:#f7b9a8; transform:rotate(2.5deg); animation: sticky-float-2 5.5s ease-in-out infinite alternate; }
-  .note-sticky:nth-child(4n+3){ background:#bfe0c4; transform:rotate(-1.5deg); animation: sticky-float-3 4.8s ease-in-out infinite alternate; }
-  .note-sticky:nth-child(4n+4){ background:#bcd3f0; transform:rotate(3deg); animation: sticky-float-4 5.2s ease-in-out infinite alternate; }
+  .note-sticky:nth-child(4n+1){ background:#f6e29a; transform:rotate(-2deg); animation: sticky-float-1 6s ease-in-out infinite alternate; }
+  .note-sticky:nth-child(4n+2){ background:#f7b9a8; transform:rotate(1.8deg); animation: sticky-float-2 6.2s ease-in-out infinite alternate; }
+  .note-sticky:nth-child(4n+3){ background:#bfe0c4; transform:rotate(-1.2deg); animation: sticky-float-3 5.8s ease-in-out infinite alternate; }
+  .note-sticky:nth-child(4n+4){ background:#bcd3f0; transform:rotate(2.2deg); animation: sticky-float-4 6.1s ease-in-out infinite alternate; }
 
   @keyframes sticky-float-1 {
     0% { transform: rotate(-3deg) translateY(0); }
@@ -576,7 +844,12 @@
     .polaroid{ width:150px; }
     .polaroid .cap{ font-size:1.25rem; }
     .letter{ padding:1.8rem 1.4rem; }
-    .note-sticky{ width:140px; min-height:140px; font-size:1.3rem; }
+    .notes{ grid-template-columns: repeat(2, 1fr); gap:1.5rem 1.2rem; max-width:400px; }
+    .note-sticky{ width:160px; min-height:140px; font-size:1.1rem; padding:1rem 0.8rem; }
+    .confessions-grid{ max-width: 100%; padding:1rem 0; }
+    .flashcard-container{ height:200px; }
+    .flashcard-face{ font-size:1.3rem; padding:1.5rem 1.2rem; }
+    .nav-btn{ width:38px; height:38px; font-size:1.1rem; }
   }
 
   /* inside jokes — kraft paper slips */
@@ -805,6 +1078,11 @@
     .polaroid .pic{ filter:none !important; }
     .written, .finale{ opacity:1; transform:none; }
     .frame{ opacity:1; transform:none; }
+    .flashcard{ transform:none !important; animation:none !important; }
+    .flashcard-face{ transform:none !important; }
+    .flashcard-face::before{ animation:none !important; }
+    .dot.active::before{ animation:none !important; }
+    .love-line{ animation:none !important; transform:none !important; }
     .hearts, .lamp{ display:none; }
     .countdown-hearts{ display:none; }
     .transition-page.show{ opacity:1; }
@@ -1470,6 +1748,12 @@
   <div class="letter" id="letter"></div>
 </div>
 
+<!-- confessions -->
+<div class="written sec-confessions">
+  <div class="sec-head"><p class="eyebrow">completely guilty as charged</p><h2>In my defence — I have none.<br><span class="love-line">But I love you.</span></h2></div>
+  <div class="confessions-grid" id="confessions"></div>
+</div>
+
 <!-- reply section removed -->
 
 <section class="finale">
@@ -1544,7 +1828,7 @@
     { date: "May 2025", title: "The day we met", note: "Where it all began — you had that beautiful smile and I was so nervous.", img: "photos/01.webp" },
     { date: "2025", title: "Somewhere new, together", note: "Remember how we got lost but laughed it off?", img: "photos/02.webp" },
     { date: "2025", title: "Laughing till it hurt", note: "Those long conversations when hours felt like minutes, talking about everything and nothing.", img: "photos/03.webp" },
-    { date: "2025", title: "Nothing special, everything special", note: "A simple lazy Sunday making breakfast and dancing in the kitchen.", img: "photos/04.webp" },
+    { date: "2025", title: "Nothing special, everything special", note: "That quiet afternoon when we just sat together, reading and sharing comfortable silence.", img: "photos/04.webp" },
     { date: "2025", title: "Right here, right now", note: "Every single day with you is my favourite new memory. I love you.", img: "photos/06.webp" },
     { date: "always", title: "Holding hands", note: "Here's to a lifetime of adventures and holding hands wherever we go.", img: "photos/12.webp", position: "top" }
   ];
@@ -1567,19 +1851,33 @@
 
   // little sticky notes — keep each short (a few words)
   const loves = [
-    "the way you laugh at your own jokes",
-    "how you steal my hoodies",
-    "your terrible morning playlist",
-    "that you remember the small things",
-    "your face when you're focused",
-    "how home feels wherever you are"
+    "🟡 You check on me more than I deserve. I'm working on deserving it.",
+    "🩷 Your laugh is my favourite sound. And I don't say that lightly.",
+    "🟡 The way you talk to me makes me feel like I actually matter.",
+    "🩷 Soft, strong, and completely unfair to everyone around you.",
+    "🟡 You fix my bad days without even knowing you're doing it.",
+    "🩷 You're funny without trying. That's the most dangerous kind.",
+    "🟡 You love quietly and fully. That's the rarest thing I've ever seen.",
+    "🩷 You laugh and I forget what I was even worried about."
+  ];
+
+  // playful confessions - things he admits to with no shame (flashcard style)
+  const confessions = [
+    { front: "😂 About falling asleep during calls...", back: "Yes I fell asleep on that call. No I will not apologise. Your voice is too comfortable. It's your fault." },
+    { front: "🍕 About my eating habits...", back: "You think I eat too much. I think I eat exactly right. We will never agree on this. And I'm okay with that." },
+    { front: "😂 When you ask if I'm listening...", back: "I don't \"disappear\" during calls. I just enter a very deep state of listening. With my eyes closed." },
+    { front: "🍕 How I fell in love...", back: "Somewhere between your food complaints and my naps, I fell completely in love with you." },
+    { front: "😂 That classic conversation...", back: "You: \"Are you even listening?\" Me, asleep for 4 minutes: \"Yes, totally, continue.\"" },
+    { front: "🍕 My life priorities...", back: "I eat, I sleep, I love you. In that order. Sometimes simultaneously." },
+    { front: "😂 My promise to you...", back: "One day I will stay awake for the entire call. Today is not that day. But soon." },
+    { front: "🩷 What I love most...", back: "You get annoyed at everything I do — and somehow that's my favourite thing about you." }
   ];
 
   // birthday wishes for the year ahead
   const wishes = [
     "go somewhere neither of us has been",
     "finally do that thing we keep talking about",
-    "have more lazy, do-nothing Sundays",
+    "spend quiet evenings just talking about everything and nothing",
     "make a hundred more memories worth a photo"
   ];
 
@@ -2385,18 +2683,6 @@
         <hr class="letter-divider">
         
         <div class="letter-funny-box">
-          <div class="letter-funny-title">⚠️ Important birthday announcements</div>
-          Dear Ankita, I must address a few serious matters on this special day:<br><br>
-          1. Your relationship with cold coffee is honestly concerning. 
-          You don't just <em>drink</em> it — you look at it like it owes you something. 
-          And ice cream? You once said "I need ice cream" with the same energy 
-          people use when calling an ambulance. I love this about you. Completely. 💛<br><br>
-          2. You have asked me "are we there yet?" on drives approximately 
-          four hundred times. The answer has never changed. Neither have I. 😄<br><br>
-          3. And the most important announcement of all —
-        </div>
-        
-        <div class="letter-funny-box">
           <div class="letter-funny-title">🎂 A very serious weight update</div>
           That weighing machine is lying. I don't trust it. You shouldn't either. It's a machine. Ignore it.<br><br>
           Because scientifically speaking — <span class="letter-highlight">you are not gaining weight. You are gaining <em>me.</em></span><br><br>
@@ -2419,6 +2705,35 @@
       </div>`;
     document.getElementById("notes").innerHTML =
       loves.map(t=>`<div class="note-sticky">${t}</div>`).join("");
+    
+    // Draw connecting threads between sticky notes
+    setTimeout(drawStickyNoteThreads, 100);
+    
+    // confessions - swipeable flashcard style
+    document.getElementById("confessions").innerHTML = `
+      <div class="flashcard-container" id="flashcardContainer">
+        ${confessions.map((c,i)=>`
+          <div class="flashcard" onclick="flipCard(${i})">
+            <div class="flashcard-face flashcard-front">
+              ${c.front}
+            </div>
+            <div class="flashcard-face flashcard-back">
+              ${c.back}
+            </div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="flashcard-nav">
+        <button class="nav-btn" id="prevBtn" onclick="navigateCard(-1)">‹</button>
+        <div class="card-indicator">
+          <div class="indicator-dots" id="indicatorDots">
+            ${confessions.map((_, i) => `<div class="dot ${i === 0 ? 'active' : ''}" data-index="${i}"></div>`).join('')}
+          </div>
+        </div>
+        <button class="nav-btn" id="nextBtn" onclick="navigateCard(1)">›</button>
+      </div>
+    `;
+    
     document.getElementById("wishes").innerHTML =
       wishes.map(t=>`<li>${t}</li>`).join("");
 
@@ -3041,4 +3356,205 @@
 
   // Initialize bear interactions immediately
   initTeddyBears();
+
+  // flashcard navigation
+  let currentCardIndex = 0;
+  const totalCards = confessions.length;
+
+  // flashcard flip function
+  window.flipCard = function(index) {
+    const flashcard = document.querySelectorAll('.flashcard')[currentCardIndex];
+    if (flashcard) {
+      flashcard.classList.toggle('flipped');
+    }
+  };
+
+  // navigate between cards
+  window.navigateCard = function(direction) {
+    const container = document.getElementById('flashcardContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const dots = document.querySelectorAll('.dot');
+    
+    if (!container) return;
+    
+    // Reset flip state when navigating
+    const currentCard = document.querySelectorAll('.flashcard')[currentCardIndex];
+    if (currentCard) {
+      currentCard.classList.remove('flipped');
+    }
+    
+    currentCardIndex += direction;
+    
+    // Boundary checks
+    if (currentCardIndex < 0) currentCardIndex = 0;
+    if (currentCardIndex >= totalCards) currentCardIndex = totalCards - 1;
+    
+    // Update transform with smooth animation
+    container.style.transform = `translateX(-${currentCardIndex * 100}%)`;
+    
+    // Add entrance animation to new card
+    setTimeout(() => {
+      const newCard = document.querySelectorAll('.flashcard')[currentCardIndex];
+      if (newCard) {
+        newCard.style.animation = 'none';
+        newCard.offsetHeight; // Force reflow
+        newCard.style.animation = 'cardEntrance 0.6s ease-out';
+      }
+    }, 100);
+    
+    // Update buttons with animation
+    prevBtn.disabled = currentCardIndex === 0;
+    nextBtn.disabled = currentCardIndex === totalCards - 1;
+    
+    // Update indicators
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentCardIndex);
+    });
+  };
+
+  // Initialize navigation
+  window.addEventListener('load', () => {
+    const prevBtn = document.getElementById('prevBtn');
+    if (prevBtn) {
+      prevBtn.disabled = true; // Start with prev disabled
+    }
+  });
+
+  // Touch/swipe support
+  let startX = 0;
+  let currentX = 0;
+  let isDragging = false;
+
+  window.addEventListener('load', () => {
+    const container = document.getElementById('flashcardContainer');
+    if (!container) return;
+
+    container.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    });
+
+    container.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      currentX = e.touches[0].clientX;
+    });
+
+    container.addEventListener('touchend', () => {
+      if (!isDragging) return;
+      const deltaX = startX - currentX;
+      
+      if (Math.abs(deltaX) > 50) { // Minimum swipe distance
+        if (deltaX > 0 && currentCardIndex < totalCards - 1) {
+          navigateCard(1); // Swipe left = next
+        } else if (deltaX < 0 && currentCardIndex > 0) {
+          navigateCard(-1); // Swipe right = prev
+        }
+      }
+      
+      isDragging = false;
+    });
+  });
+
+  // Draw connecting threads between sticky notes
+  function drawStickyNoteThreads() {
+    const notesContainer = document.querySelector('.notes');
+    const notes = document.querySelectorAll('.note-sticky');
+    
+    if (!notesContainer || notes.length === 0) return;
+    
+    // Remove existing thread canvas if any
+    const existingCanvas = notesContainer.querySelector('.thread-canvas');
+    if (existingCanvas) existingCanvas.remove();
+    
+    // Create canvas for drawing threads
+    const canvas = document.createElement('canvas');
+    canvas.className = 'thread-canvas';
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    canvas.style.width = '100%';
+    canvas.style.height = '100%';
+    canvas.style.pointerEvents = 'none';
+    canvas.style.zIndex = '1';
+    
+    const rect = notesContainer.getBoundingClientRect();
+    canvas.width = rect.width * 2; // High DPI
+    canvas.height = rect.height * 2;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2, 2); // High DPI scaling
+    
+    // Thread styling
+    ctx.strokeStyle = 'rgba(197, 54, 43, 0.4)'; // Thread glow color
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.shadowColor = 'rgba(197, 54, 43, 0.3)';
+    ctx.shadowBlur = 4;
+    
+    // Get note positions relative to container
+    const notePositions = Array.from(notes).map(note => {
+      const noteRect = note.getBoundingClientRect();
+      const containerRect = notesContainer.getBoundingClientRect();
+      return {
+        x: noteRect.left - containerRect.left + noteRect.width / 2,
+        y: noteRect.top - containerRect.top + noteRect.height / 2,
+        width: noteRect.width,
+        height: noteRect.height
+      };
+    });
+    
+    // Draw connections between notes in a flowing pattern
+    ctx.beginPath();
+    
+    // Connect first row (4 notes) horizontally
+    for (let i = 0; i < Math.min(3, notePositions.length - 1); i++) {
+      const start = notePositions[i];
+      const end = notePositions[i + 1];
+      
+      // Create a slightly curved line
+      const midX = (start.x + end.x) / 2;
+      const midY = (start.y + end.y) / 2 - 15; // Slight curve upward
+      
+      ctx.moveTo(start.x + start.width * 0.3, start.y);
+      ctx.quadraticCurveTo(midX, midY, end.x - end.width * 0.3, end.y);
+    }
+    
+    // Connect from end of first row to start of second row
+    if (notePositions.length > 4) {
+      const firstRowEnd = notePositions[3];
+      const secondRowStart = notePositions[4];
+      
+      // Curved connection downward
+      const midX = (firstRowEnd.x + secondRowStart.x) / 2;
+      const midY = firstRowEnd.y + (secondRowStart.y - firstRowEnd.y) / 2;
+      
+      ctx.moveTo(firstRowEnd.x, firstRowEnd.y + firstRowEnd.height * 0.3);
+      ctx.quadraticCurveTo(midX + 20, midY, secondRowStart.x, secondRowStart.y - secondRowStart.height * 0.3);
+    }
+    
+    // Connect second row (3 notes) horizontally
+    for (let i = 4; i < Math.min(6, notePositions.length - 1); i++) {
+      const start = notePositions[i];
+      const end = notePositions[i + 1];
+      
+      const midX = (start.x + end.x) / 2;
+      const midY = (start.y + end.y) / 2 + 15; // Slight curve downward
+      
+      ctx.moveTo(start.x + start.width * 0.3, start.y);
+      ctx.quadraticCurveTo(midX, midY, end.x - end.width * 0.3, end.y);
+    }
+    
+    ctx.stroke();
+    
+    // Add the canvas to the container
+    notesContainer.appendChild(canvas);
+  }
+
+  // Redraw threads on window resize
+  window.addEventListener('resize', () => {
+    setTimeout(drawStickyNoteThreads, 100);
+  });
 </script>

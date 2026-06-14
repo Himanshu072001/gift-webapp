@@ -21,6 +21,7 @@ All personalization is driven by these constants near the top of the `<script>`:
 | `moments[]` | Desk Polaroids: `{ date, title, note, img, position }` (position optional: e.g., "top", "center", "bottom"). |
 | `LETTER` | `{ dear, body:[paragraphs], sign }`. |
 | `loves[]` | Sticky-note strings. |
+| `confessions[]` | Flashcard objects: `{ front, back }` for swipeable confession cards. |
 | `wishes[]` | Wishes-list strings. |
 | `jokes[]` | Inside-joke objects: `{ text, img }` (img maps to a funniest 4-digit photo, which renders as a mini Polaroid taped to the joke). |
 | `gallery[]` | Photos list: `{ img, category: "sweet"|"silly"|"chaotic", caption }` |
@@ -48,9 +49,19 @@ All personalization is driven by these constants near the top of the `<script>`:
 - **Heart layout currently disabled**: The optional heart layout (`GALLERY_SHAPE = "heart"`) is commented out due to visibility issues. The CSS and JavaScript for heart layout are preserved in comments and can be re-enabled after fixing the frame visibility problems.
 - The lightbox is a **simple viewer**: tap a frame (or inside joke mini-polaroid) to enlarge, previous/next arrows + keyboard ← / →, cross-fade between images, Escape/backdrop to close. There is intentionally **no** slideshow auto-play, no idle screensaver, and no constant Ken-Burns zoom — keep it that way unless asked.
 
+## The confessions flashcards
+
+- **Swipeable carousel**: Flashcards are arranged in a horizontal container with navigation arrows and dot indicators.
+- **3D flip effect**: Cards use CSS `transform-style: preserve-3d` with front and back faces. Click any visible card to flip it.
+- **Navigation**: Arrow buttons and dot indicators allow moving between cards. Only one card is visible at a time.
+- **Touch support**: Cards can be swiped on mobile devices using pointer events.
+- **Accessibility**: Reduced motion users get instant flips without transition animations but preserve the flip functionality.
+
 ## Known sharp edges
 
-- **Layout timing:** the desk (`layout()`) positions elements absolutely from measured widths. Call it on `load` and `resize`, and guard against a zero/too-small width. After any change that affects element sizes, re-run layout.
+- **Layout timing:** the desk (`layout()`) positions elements absolutely from measured widths in exactly 2 rows. Call it on `load` and `resize`, and guard against a zero/too-small width. After any change that affects element sizes, re-run layout.
+- **Flashcard 3D transforms:** Flashcards use CSS `transform-style: preserve-3d` and `backface-visibility: hidden`. The reduced motion media query disables transitions but preserves flip functionality by not overriding transforms completely.
+- **Sticky note threads:** Thread connections between sticky notes are drawn using Canvas API with quadratic bezier curves. Drawing is delayed with `setTimeout` to ensure DOM elements are rendered before calculating positions.
 - **Heart layout disabled:** The heart layout feature is currently commented out due to frame visibility issues. The positioning calculations work correctly, but frames remain invisible despite having the `.show` class. This appears to be related to CSS specificity or browser security restrictions with fallback images.
 - **`sampleImg` security:** When loading the HTML file directly (file://), browser security prevents data URI fallback images from loading, causing gallery frames to appear empty. This is resolved when the site is served via HTTP(S).
 - **`sampleImg` IDs:** each SVG uses `id="g"` for its gradient. That's fine because each data-URI is its own isolated document; don't "fix" it by sharing one gradient.

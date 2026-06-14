@@ -529,10 +529,10 @@
   .notes{ 
     display: grid; 
     grid-template-columns: repeat(4, 1fr); 
-    gap: 2rem 1.5rem; 
+    gap: 2.5rem 1.8rem; 
     justify-items: center;
-    padding: 2rem 0;
-    max-width: 900px;
+    padding: 2.5rem 0;
+    max-width: 1000px;
     margin: 0 auto;
     position: relative;
   }
@@ -785,12 +785,12 @@
     50% { transform: scale(1.05); }
   }
   .note-sticky{
-    width: 180px; 
-    min-height: 160px; 
-    padding: 1.3rem 1.1rem;
+    width: 200px; 
+    min-height: 180px; 
+    padding: 1.5rem 1.3rem;
     font-family: "Caveat", cursive; 
-    font-size: 1.25rem; 
-    line-height: 1.35; 
+    font-size: 1.35rem; 
+    line-height: 1.4; 
     color: #3a342c;
     box-shadow: 0 12px 24px -8px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.1);
     display: flex; 
@@ -844,8 +844,8 @@
     .polaroid{ width:150px; }
     .polaroid .cap{ font-size:1.25rem; }
     .letter{ padding:1.8rem 1.4rem; }
-    .notes{ grid-template-columns: repeat(2, 1fr); gap:1.5rem 1.2rem; max-width:400px; }
-    .note-sticky{ width:160px; min-height:140px; font-size:1.1rem; padding:1rem 0.8rem; }
+    .notes{ grid-template-columns: repeat(2, 1fr); gap:1.8rem 1.4rem; max-width:450px; }
+    .note-sticky{ width:180px; min-height:160px; font-size:1.2rem; padding:1.2rem 1rem; }
     .confessions-grid{ max-width: 100%; padding:1rem 0; }
     .flashcard-container{ height:200px; }
     .flashcard-face{ font-size:1.3rem; padding:1.5rem 1.2rem; }
@@ -1882,11 +1882,14 @@
   ];
 
   // inside jokes — short lines only the two of you understand
-  // You can link these to your "most funniest" (4-digit) photos.
   const jokes = [
-    { text: "you know what you did 🌮 (click to see why)", img: "photos/1111.webp" },
-    { text: "\"five more minutes\" (it's never five minutes) ⏰", img: "photos/2222.webp" },
-    { text: "the duck. we don't talk about the duck. 🦆", img: "photos/3333.webp" }
+    { text: "😴 \"Me: I'm not sleepy. Also me: joins the call and passes out in 4 minutes.\"" },
+    { text: "🎯 \"She talks. I listen. Sometimes I listen with my eyes closed. She calls it sleeping. I call it focus.\"" },
+    { text: "🤦 \"I asked if she wanted anything. She said no. I came back with nothing. Biggest mistake of my life.\"" },
+    { text: "⏱️ \"She gets annoyed in 3 seconds flat. Forgives in 3 minutes. I have studied this pattern carefully.\"" },
+    { text: "👀 \"I said something. She gave me the look. I immediately forgot what I said and apologised anyway.\"" },
+    { text: "🕐 \"She's ready in 10 minutes. I say I'll be ready in 10 minutes. These are not the same 10 minutes.\"" },
+    { text: "📱 \"She texts. I reply late. She asks why. I say I was busy. I was not busy.\"" }
   ];
 
   // GALLERY — list every photo you have with her here.

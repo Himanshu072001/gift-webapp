@@ -60,8 +60,10 @@ All personalization is driven by these constants near the top of the `<script>`:
 ## Known sharp edges
 
 - **Layout timing:** the desk (`layout()`) positions elements absolutely from measured widths in exactly 2 rows. Call it on `load` and `resize`, and guard against a zero/too-small width. After any change that affects element sizes, re-run layout.
+- **Countdown timer synchronization:** There are two countdown configurations that must be kept in sync: `BIRTHDAY_DATE` (edit block) and `targetDate` (logic). Both should use the same time offset for consistent behavior.
 - **Flashcard 3D transforms:** Flashcards use CSS `transform-style: preserve-3d` and `backface-visibility: hidden`. The reduced motion media query disables transitions but preserves flip functionality by not overriding transforms completely.
 - **Sticky note threads:** Thread connections between sticky notes are drawn using Canvas API with quadratic bezier curves. Drawing is delayed with `setTimeout` to ensure DOM elements are rendered before calculating positions.
+- **Floating hearts animation:** Hearts use fixed positioning with full viewport dimensions (`100vw x 100vh`) and travel using viewport units (`-100vh`) for proper full-screen floating effect.
 - **Heart layout disabled:** The heart layout feature is currently commented out due to frame visibility issues. The positioning calculations work correctly, but frames remain invisible despite having the `.show` class. This appears to be related to CSS specificity or browser security restrictions with fallback images.
 - **`sampleImg` security:** When loading the HTML file directly (file://), browser security prevents data URI fallback images from loading, causing gallery frames to appear empty. This is resolved when the site is served via HTTP(S).
 - **`sampleImg` IDs:** each SVG uses `id="g"` for its gradient. That's fine because each data-URI is its own isolated document; don't "fix" it by sharing one gradient.
@@ -77,12 +79,17 @@ There's no test suite. After editing:
 ## The countdown and quiz flow
 
 The experience now includes a three-stage pre-Memory Box flow:
-1. **Countdown Timer** - shows until `BIRTHDAY_DATE` at midnight. Includes skip button for testing.
+1. **Countdown Timer** - shows until `BIRTHDAY_DATE` at midnight. Currently configured for 1-minute countdown for testing. Includes invisible skip button (top-right corner) for development.
 2. **Transition Page** - birthday greeting with button to start quiz.
 3. **Romantic Quiz** - interactive questions from `quizQuestions[]` with memory reveals.
 4. **Main Memory Box** - original gift experience begins.
 
 The countdown, transition, and quiz pages use fixed positioning (`z-index: 100, 90, 80`) and hide/show via opacity transitions. All respect `prefers-reduced-motion`.
+
+**Countdown Configuration:**
+- `BIRTHDAY_DATE`: Used for date formatting in edit block
+- `targetDate`: Controls actual countdown logic (currently set to 60 seconds for testing)
+- Skip button: Invisible (`opacity: 0`) but clickable in top-right corner
 
 ## When adding a section
 

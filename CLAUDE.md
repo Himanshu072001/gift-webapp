@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude (and Claude Code) when working on **The Memory Box** (`memory-box.html`). Read `CONTEXT.md` and `DESIGN.md` alongside this.
+Guidance for Claude (and Claude Code) when working on **The Memory Box** (`index.html`). Read `CONTEXT.md` and `DESIGN.md` alongside this.
 
 ## The golden rule
 
@@ -16,14 +16,17 @@ All personalization is driven by these constants near the top of the `<script>`:
 
 | Constant | Purpose |
 |---|---|
+| `BIRTHDAY_DATE` | Target date for countdown timer (format: "YYYY-MM-DD"). Memory Box unlocks at midnight on this date. |
 | `HER_NAME` | Shown in the hero and `<title>`; auto-substituted into the letter's `[Her Name]`. |
-| `moments[]` | Desk Polaroids: `{ date, title, note, img }`. |
+| `moments[]` | Desk Polaroids: `{ date, title, note, img, position }` (position optional: e.g., "top", "center", "bottom"). |
 | `LETTER` | `{ dear, body:[paragraphs], sign }`. |
 | `loves[]` | Sticky-note strings. |
+| `confessions[]` | Flashcard objects: `{ front, back }` for swipeable confession cards. |
 | `wishes[]` | Wishes-list strings. |
-| `jokes[]` | Inside-joke strings. |
-| `gallery[]` | `{ img, caption }`; caption optional. |
+| `jokes[]` | Inside-joke objects: `{ text, img }` (img maps to a funniest 4-digit photo, which renders as a mini Polaroid taped to the joke). |
+| `gallery[]` | Photos list: `{ img, category: "sweet"|"silly"|"chaotic", caption }` |
 | `GALLERY_SHAPE` | `"grid"` (framed wall, default) or `"heart"`. |
+| `quizQuestions[]` | Quiz questions: `{ question, options:[4 choices], correct:index, memory:"sweet note" }`. |
 | `REPLY_TO` | `{ method:"email"|"whatsapp", to }`. |
 
 `sampleImg(i)` (defined above the edit block) generates the inline placeholder images. It is preview-only — never depend on it for real output, and don't remove it unless the user has replaced every `sampleImg(...)` reference.
@@ -42,14 +45,27 @@ All personalization is driven by these constants near the top of the `<script>`:
 
 ## The gallery ("Us, in pictures")
 
-- Default `GALLERY_SHAPE = "grid"`: a CSS-columns masonry wall of framed photos. Frames reveal with a gentle fade-up on scroll and lift on hover.
-- Optional `GALLERY_SHAPE = "heart"`: frames are positioned absolutely along a parametric heart curve by `heartLayout()`. In heart mode the photos float (`floatPhoto`) and the whole heart beats (`heartThrob`); these animations are scoped to `.wall.heart` and don't run in grid mode.
-- The lightbox is a **simple viewer**: tap a frame to enlarge, previous/next arrows + keyboard ← / →, cross-fade between images, Escape/backdrop to close. There is intentionally **no** slideshow auto-play, no idle screensaver, and no constant Ken-Burns zoom — keep it that way unless asked.
+- `GALLERY_SHAPE = "grid"`: a CSS-columns masonry wall of framed photos with filter tabs ("show all", "sweet memories", "silly snaps", "absolute chaos") and a staggered entrance transition.
+- **Heart layout currently disabled**: The optional heart layout (`GALLERY_SHAPE = "heart"`) is commented out due to visibility issues. The CSS and JavaScript for heart layout are preserved in comments and can be re-enabled after fixing the frame visibility problems.
+- The lightbox is a **simple viewer**: tap a frame (or inside joke mini-polaroid) to enlarge, previous/next arrows + keyboard ← / →, cross-fade between images, Escape/backdrop to close. There is intentionally **no** slideshow auto-play, no idle screensaver, and no constant Ken-Burns zoom — keep it that way unless asked.
+
+## The confessions flashcards
+
+- **Swipeable carousel**: Flashcards are arranged in a horizontal container with navigation arrows and dot indicators.
+- **3D flip effect**: Cards use CSS `transform-style: preserve-3d` with front and back faces. Click any visible card to flip it.
+- **Navigation**: Arrow buttons and dot indicators allow moving between cards. Only one card is visible at a time.
+- **Touch support**: Cards can be swiped on mobile devices using pointer events.
+- **Accessibility**: Reduced motion users get instant flips without transition animations but preserve the flip functionality.
 
 ## Known sharp edges
 
-- **Layout timing:** the desk (`layout()`) and the heart (`heartLayout()`, heart mode only) position elements absolutely from measured widths. Call them on `load` and `resize`, and guard against a zero/too-small width (the heart already does a `requestAnimationFrame` retry). After any change that affects element sizes, re-run layout.
-- **Heart visibility (heart mode):** heart-mode frames are revealed immediately (not via the scroll observer) because the observer was unreliable for the clustered, absolutely-positioned frames. Keep that behavior.
+- **Layout timing:** the desk (`layout()`) positions elements absolutely from measured widths in exactly 2 rows. Call it on `load` and `resize`, and guard against a zero/too-small width. After any change that affects element sizes, re-run layout.
+- **Countdown timer synchronization:** There are two countdown configurations that must be kept in sync: `BIRTHDAY_DATE` (edit block) and `targetDate` (logic). Both should use the same time offset for consistent behavior.
+- **Flashcard 3D transforms:** Flashcards use CSS `transform-style: preserve-3d` and `backface-visibility: hidden`. The reduced motion media query disables transitions but preserves flip functionality by not overriding transforms completely.
+- **Sticky note threads:** Thread connections between sticky notes are drawn using Canvas API with quadratic bezier curves. Drawing is delayed with `setTimeout` to ensure DOM elements are rendered before calculating positions.
+- **Floating hearts animation:** Hearts use fixed positioning with full viewport dimensions (`100vw x 100vh`) and travel using viewport units (`-100vh`) for proper full-screen floating effect.
+- **Heart layout disabled:** The heart layout feature is currently commented out due to frame visibility issues. The positioning calculations work correctly, but frames remain invisible despite having the `.show` class. This appears to be related to CSS specificity or browser security restrictions with fallback images.
+- **`sampleImg` security:** When loading the HTML file directly (file://), browser security prevents data URI fallback images from loading, causing gallery frames to appear empty. This is resolved when the site is served via HTTP(S).
 - **`sampleImg` IDs:** each SVG uses `id="g"` for its gradient. That's fine because each data-URI is its own isolated document; don't "fix" it by sharing one gradient.
 
 ## How to verify a change
@@ -59,6 +75,21 @@ There's no test suite. After editing:
 2. Confirm the edit block still parses (balanced brackets/quotes) — a stray quote breaks the whole page silently.
 3. Spot-check that new motion has a reduced-motion fallback and uses tokens.
 4. Re-present the file to the user.
+
+## The countdown and quiz flow
+
+The experience now includes a three-stage pre-Memory Box flow:
+1. **Countdown Timer** - shows until `BIRTHDAY_DATE` at midnight. Currently configured for 1-minute countdown for testing. Includes invisible skip button (top-right corner) for development.
+2. **Transition Page** - birthday greeting with button to start quiz.
+3. **Romantic Quiz** - interactive questions from `quizQuestions[]` with memory reveals.
+4. **Main Memory Box** - original gift experience begins.
+
+The countdown, transition, and quiz pages use fixed positioning (`z-index: 100, 90, 80`) and hide/show via opacity transitions. All respect `prefers-reduced-motion`.
+
+**Countdown Configuration:**
+- `BIRTHDAY_DATE`: Used for date formatting in edit block
+- `targetDate`: Controls actual countdown logic (currently set to 60 seconds for testing)
+- Skip button: Invisible (`opacity: 0`) but clickable in top-right corner
 
 ## When adding a section
 

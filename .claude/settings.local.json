@@ -4,7 +4,9 @@
       "mcp__hyper__connect",
       "Bash(git init)",
       "Bash(git remote add origin https://github.com/Himanshu072001/gift-webapp.git)",
-      "Bash(git add .)"
+      "Bash(git add .)",
+      "Read(//var/folders/9v/s2519cgs7t5fz075xhcgx43w0000gn/T/TemporaryItems/NSIRD_screencaptureui_6gekzm/**)",
+      "Read(//Users/himanshukesharwani/Downloads/**)"
     ],
     "deny": [],
     "ask": []

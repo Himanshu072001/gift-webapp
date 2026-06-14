@@ -1,0 +1,194 @@
+[
+  {
+    "original": "01.JPG",
+    "optimized": "photos/01.webp",
+    "category": "good",
+    "name": "01"
+  },
+  {
+    "original": "02.jpeg",
+    "optimized": "photos/02.webp",
+    "category": "good",
+    "name": "02"
+  },
+  {
+    "original": "03.JPG",
+    "optimized": "photos/03.webp",
+    "category": "good",
+    "name": "03"
+  },
+  {
+    "original": "04.JPG",
+    "optimized": "photos/04.webp",
+    "category": "good",
+    "name": "04"
+  },
+  {
+    "original": "05.JPG",
+    "optimized": "photos/05.webp",
+    "category": "good",
+    "name": "05"
+  },
+  {
+    "original": "06.jpg",
+    "optimized": "photos/06.webp",
+    "category": "good",
+    "name": "06"
+  },
+  {
+    "original": "07.jpg",
+    "optimized": "photos/07.webp",
+    "category": "good",
+    "name": "07"
+  },
+  {
+    "original": "08.jpg",
+    "optimized": "photos/08.webp",
+    "category": "good",
+    "name": "08"
+  },
+  {
+    "original": "09.jpg",
+    "optimized": "photos/09.webp",
+    "category": "good",
+    "name": "09"
+  },
+  {
+    "original": "10.jpg",
+    "optimized": "photos/10.webp",
+    "category": "good",
+    "name": "10"
+  },
+  {
+    "original": "101.png",
+    "optimized": "photos/101.webp",
+    "category": "funny",
+    "name": "101"
+  },
+  {
+    "original": "102.png",
+    "optimized": "photos/102.webp",
+    "category": "funny",
+    "name": "102"
+  },
+  {
+    "original": "103.jpeg",
+    "optimized": "photos/103.webp",
+    "category": "funny",
+    "name": "103"
+  },
+  {
+    "original": "104.jpeg",
+    "optimized": "photos/104.webp",
+    "category": "funny",
+    "name": "104"
+  },
+  {
+    "original": "105.jpeg",
+    "optimized": "photos/105.webp",
+    "category": "funny",
+    "name": "105"
+  },
+  {
+    "original": "106.jpeg",
+    "optimized": "photos/106.webp",
+    "category": "funny",
+    "name": "106"
+  },
+  {
+    "original": "107.jpeg",
+    "optimized": "photos/107.webp",
+    "category": "funny",
+    "name": "107"
+  },
+  {
+    "original": "108.jpeg",
+    "optimized": "photos/108.webp",
+    "category": "funny",
+    "name": "108"
+  },
+  {
+    "original": "109.jpeg",
+    "optimized": "photos/109.webp",
+    "category": "funny",
+    "name": "109"
+  },
+  {
+    "original": "11.jpeg",
+    "optimized": "photos/11.webp",
+    "category": "good",
+    "name": "11"
+  },
+  {
+    "original": "110.jpeg",
+    "optimized": "photos/110.webp",
+    "category": "funny",
+    "name": "110"
+  },
+  {
+    "original": "111.jpeg",
+    "optimized": "photos/111.webp",
+    "category": "funny",
+    "name": "111"
+  },
+  {
+    "original": "1111.jpeg",
+    "optimized": "photos/1111.webp",
+    "category": "funniest",
+    "name": "1111"
+  },
+  {
+    "original": "112.jpeg",
+    "optimized": "photos/112.webp",
+    "category": "funny",
+    "name": "112"
+  },
+  {
+    "original": "113.png",
+    "optimized": "photos/113.webp",
+    "category": "funny",
+    "name": "113"
+  },
+  {
+    "original": "114.jpeg",
+    "optimized": "photos/114.webp",
+    "category": "funny",
+    "name": "114"
+  },
+  {
+    "original": "115.jpeg",
+    "optimized": "photos/115.webp",
+    "category": "funny",
+    "name": "115"
+  },
+  {
+    "original": "116.jpeg",
+    "optimized": "photos/116.webp",
+    "category": "funny",
+    "name": "116"
+  },
+  {
+    "original": "117.jpeg",
+    "optimized": "photos/117.webp",
+    "category": "funny",
+    "name": "117"
+  },
+  {
+    "original": "12.jpeg",
+    "optimized": "photos/12.webp",
+    "category": "good",
+    "name": "12"
+  },
+  {
+    "original": "2222.jpeg",
+    "optimized": "photos/2222.webp",
+    "category": "funniest",
+    "name": "2222"
+  },
+  {
+    "original": "3333.jpeg",
+    "optimized": "photos/3333.webp",
+    "category": "funniest",
+    "name": "3333"
+  }
+]

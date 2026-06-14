@@ -1,0 +1,211 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+  .letter-wrap {
+    max-width: 640px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  .letter-card {
+    background: #fffdf7;
+    border: 1px solid #e8dfc8;
+    border-radius: 14px;
+    padding: 3rem 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .letter-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #c9847a, #e2a87e, #c9847a);
+    border-radius: 14px 14px 0 0;
+  }
+  .petal { position: absolute; opacity: 0.06; font-size: 90px; pointer-events: none; }
+  .petal-1 { top: -10px; right: 10px; transform: rotate(20deg); }
+  .petal-2 { bottom: 60px; left: -15px; transform: rotate(-30deg); }
+  .date-line {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    color: #9e7b5a;
+    font-size: 15px;
+    margin-bottom: 1.8rem;
+    letter-spacing: 0.02em;
+  }
+  .salutation {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 500;
+    color: #3d2b1f;
+    margin-bottom: 1.5rem;
+  }
+  .body-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    line-height: 2;
+    color: #3d2b1f;
+    margin-bottom: 1.3rem;
+  }
+  .highlight {
+    color: #b5503d;
+    font-style: italic;
+    font-weight: 500;
+  }
+  .funny-box {
+    background: #fff8ee;
+    border: 1.5px dashed #e2a87e;
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    line-height: 1.9;
+    color: #4a3020;
+  }
+  .funny-box .funny-title {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #c9847a;
+    margin-bottom: 0.5rem;
+    font-family: sans-serif;
+  }
+  .closing {
+    margin-top: 2.5rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    line-height: 2;
+    color: #3d2b1f;
+  }
+  .signature {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    font-style: italic;
+    color: #b5503d;
+    margin-top: 0.4rem;
+    font-weight: 500;
+  }
+  .divider {
+    border: none;
+    border-top: 1px solid #e0d0b8;
+    margin: 2rem 0;
+  }
+  .hearts-footer {
+    text-align: center;
+    color: #c9847a;
+    font-size: 18px;
+    letter-spacing: 8px;
+    margin-top: 1.8rem;
+  }
+  @media (max-width: 500px) {
+    .letter-card { padding: 2rem 1.4rem; }
+    .body-text { font-size: 17px; }
+    .funny-box { font-size: 16px; }
+  }
+  @media (prefers-color-scheme: dark) {
+    .letter-card { background: #1e1713; border-color: #3a2e22; }
+    .salutation, .body-text, .closing { color: #f0e6d6; }
+    .date-line { color: #c4a07a; }
+    .funny-box { background: #251c13; border-color: #7a5030; color: #e8d8c0; }
+    .funny-box .funny-title { color: #e2a87e; }
+  }
+</style>
+
+<div class="letter-wrap">
+  <div class="letter-card">
+    <div class="petal petal-1">🌸</div>
+    <div class="petal petal-2">🌺</div>
+
+    <div class="date-line">June 2026 &nbsp;·&nbsp; Written with too much love and not enough words</div>
+
+    <div class="salutation">My dearest Ankita,</div>
+
+    <p class="body-text">
+      Happy Birthday to the girl who walked into a coffee shop one nervous afternoon 
+      and somehow walked right into my entire life. 
+      <span class="highlight">I still don't think you fully realise what you did that day.</span>
+    </p>
+
+    <p class="body-text">
+      The 3rd of May, 2025. Both of us nervous, 
+      both of us pretending we weren't. 
+      That one cup of coffee started video calls that went on for hours, 
+      conversations that felt like home, 
+      and a feeling I couldn't quite name but didn't want to let go of.
+    </p>
+
+    <p class="body-text">
+      Then life paused — the way life sometimes does. 
+      But I've always believed that God has a plan, 
+      and when nothing made sense, 
+      <span class="highlight">I held on to that faith — and it brought us back to each other on the 28th of September.</span> 
+      I truly believe He had a hand in this. 
+      Because some things are just too perfectly timed to be accidental.
+    </p>
+
+    <p class="body-text">
+      And then the 9th of March — our roka — 
+      the day I could say in front of everyone: 
+      <span class="highlight">she's the one. She was always the one.</span>
+      Now we wait for the day we get married, 
+      and honestly? I'd wait forever. 
+      Though I'd prefer sooner. 😄
+    </p>
+
+    <hr class="divider">
+
+    <p class="body-text">
+      Ankita, the way you make me feel at home — not in a house, 
+      but in a feeling — that is something no one else has ever given me. 
+      Your smile, the way you laugh at things that probably shouldn't be that funny, 
+      the warmth you carry everywhere you go — 
+      <span class="highlight">I am so lucky that nervous coffee shop date didn't go wrong.</span>
+    </p>
+
+    <p class="body-text">
+      On your birthday, I don't just want to wish you happiness. 
+      I want to promise you every ordinary evening, 
+      every cold coffee refill, every scoop of ice cream you absolutely <em>need</em> right now — 
+      <span class="highlight">I'll be there for all of it. Especially the ice cream emergencies.</span>
+    </p>
+
+    <hr class="divider">
+
+    <div class="funny-box">
+      <div class="funny-title">⚠️ Important birthday announcements</div>
+      Dear Ankita, I must address a few serious matters on this special day:<br><br>
+      1. Your relationship with cold coffee is honestly concerning. 
+      You don't just <em>drink</em> it — you look at it like it owes you something. 
+      And ice cream? You once said "I need ice cream" with the same energy 
+      people use when calling an ambulance. I love this about you. Completely. 💛<br><br>
+      2. You have asked me "are we there yet?" on drives approximately 
+      four hundred times. The answer has never changed. Neither have I. 😄<br><br>
+      3. And the most important announcement of all —
+    </div>
+
+    <div class="funny-box">
+      <div class="funny-title">🎂 A very serious weight update</div>
+      Jaan, I know you've been worried about gaining weight lately. 
+      So let me clear this up officially and scientifically:<br><br>
+      <span class="highlight">You are not gaining weight. You are gaining <em>me.</em></span><br><br>
+      That's right. Every extra bit? That's just love. 
+      My love, to be specific. It's very dense. Very warm. 
+      Completely calorie-free — unlike the cold coffees and ice creams, 
+      which I'm not saying are responsible, but I'm also not <em>not</em> saying that. 🍦☕😂<br><br>
+      You are perfect. You have always been perfect. 
+      And anyone who says otherwise will have to answer to me.
+    </div>
+
+    <div class="closing">
+      Happy Birthday, my favourite person. 
+      Here's to every memory we've made and every one still waiting for us. 
+      <span class="highlight">I love you — cold coffees, ice cream cravings, nervous first meetings and all.</span><br><br>
+      Always and completely yours,<br>
+      <span class="signature">Tumhara 💛</span>
+    </div>
+
+    <div class="hearts-footer">♥ ♥ ♥</div>
+  </div>
+</div>

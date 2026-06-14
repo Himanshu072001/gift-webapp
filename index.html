@@ -569,6 +569,7 @@
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
     transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     cursor: pointer;
     flex-shrink: 0;
@@ -577,12 +578,13 @@
   .flashcard.flipped {
     transform: rotateY(180deg);
   }
-  .flashcard:hover {
+  .flashcard:not(.flipped):hover {
     transform: translateY(-5px) scale(1.02);
     box-shadow: 0 15px 35px rgba(0,0,0,0.15);
   }
   .flashcard.flipped:hover {
     transform: rotateY(180deg) translateY(-5px) scale(1.02);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
   }
   @keyframes cardEntrance {
     0% { 
@@ -596,9 +598,12 @@
   }
   .flashcard-face {
     position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     border-radius: 16px;
     padding: 2rem 1.8rem;
     font-family: "Caveat", cursive;
@@ -611,8 +616,8 @@
     justify-content: center;
     text-align: center;
     transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    position: relative;
     overflow: hidden;
+    box-sizing: border-box;
   }
   .flashcard-face::before {
     content: '';
@@ -1078,8 +1083,8 @@
     .polaroid .pic{ filter:none !important; }
     .written, .finale{ opacity:1; transform:none; }
     .frame{ opacity:1; transform:none; }
-    .flashcard{ transform:none !important; animation:none !important; }
-    .flashcard-face{ transform:none !important; }
+    .flashcard{ animation:none !important; transition:none !important; }
+    .flashcard-face{ transition:none !important; }
     .flashcard-face::before{ animation:none !important; }
     .dot.active::before{ animation:none !important; }
     .love-line{ animation:none !important; transform:none !important; }
@@ -1714,12 +1719,6 @@
   <div class="notes" id="notes"></div>
 </div>
 
-<!-- wishes for the year -->
-<div class="written">
-  <div class="sec-head"><p class="eyebrow">for the year ahead</p><h2>This year, I hope we…</h2></div>
-  <ul class="wishes" id="wishes"></ul>
-</div>
-
 <!-- inside jokes -->
 <div class="written">
   <div class="sec-head"><p class="eyebrow">things only we get</p><h2>Our inside jokes</h2></div>
@@ -1752,6 +1751,11 @@
 <div class="written sec-confessions">
   <div class="sec-head"><p class="eyebrow">completely guilty as charged</p><h2>In my defence — I have none.<br><span class="love-line">But I love you.</span></h2></div>
   <div class="confessions-grid" id="confessions"></div>
+</div>
+<!-- wishes for the year -->
+<div class="written">
+  <div class="sec-head"><p class="eyebrow">for the year ahead</p><h2>This year, I hope we…</h2></div>
+  <ul class="wishes" id="wishes"></ul>
 </div>
 
 <!-- reply section removed -->
@@ -2803,30 +2807,29 @@
     const cardW = state[0].el.offsetWidth || (narrow?150:210);
     const cardH = state[0].el.offsetHeight || (narrow ? 200 : 280);
     const padX = narrow ? 12 : Math.max(24, w*0.04);
-    const stepY = cardH + (narrow ? 34 : 56);   // full card height + gap -> no overlap
+    const stepY = cardH + (narrow ? 34 : 56);   // gap between rows
     const usable = w - cardW - padX*2;
+    const cardsPerRow = Math.ceil(state.length / 2); // distribute across 2 rows
 
     state.forEach((s,i)=>{
       if(s.moved) return;             // keep where the user dragged it
-      const lane = i % 2;             // alternating left and right lanes
+      const row = Math.floor(i / cardsPerRow); // 0 for first row, 1 for second row
+      const colInRow = i % cardsPerRow; // position within the row
       
       if (narrow) {
-        // Mobile layout: simple zig-zag with half the usable space swing
-        const swing = usable * 0.5;
-        const base = lane === 0 ? padX : padX + (usable - swing);
-        s.x = base + s.jx * swing;
+        // Mobile layout: distribute evenly across row width
+        const colSpacing = usable / Math.max(1, cardsPerRow - 1);
+        s.x = padX + (colInRow * colSpacing) + (s.jx * 20 - 10); // small jitter
       } else {
-        // Desktop layout: strict left/right column bounds (no crossing)
-        const colWidth = usable * 0.35;
-        const base = lane === 0 ? padX : padX + usable - colWidth;
-        const colJitter = s.jx * (usable * 0.15); // safe random horizontal offset inside column
-        s.x = base + colJitter;
+        // Desktop layout: distribute evenly with more spacing
+        const colSpacing = usable / Math.max(1, cardsPerRow - 1);
+        s.x = padX + (colInRow * colSpacing) + (s.jx * 30 - 15); // slightly more jitter
       }
       
-      s.y = 60 + i*stepY + (s.jy*12 - 6);   // tiny vertical jitter
+      s.y = 60 + row * stepY + (s.jy * 12 - 6);   // only 2 row positions with tiny jitter
       apply(s);
     });
-    const maxY = Math.max(...state.map(s=>s.y)) + cardH + 120; // spacious bottom padding
+    const maxY = 60 + 2 * stepY + cardH + 120; // fixed height for exactly 2 rows
     desk.style.height = maxY + "px";
     svg.setAttribute("viewBox", `0 0 ${w} ${maxY}`);
     svg.style.height = maxY + "px";

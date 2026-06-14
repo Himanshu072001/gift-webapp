@@ -1921,10 +1921,10 @@
 
   /* ================= EDIT THIS ================= */
 
-  // countdown target: when the main page unlocks (midnight on 27th)
+  // countdown target: when the main page unlocks (midnight on her birthday)
   // format: "YYYY-MM-DD" - will unlock at 12:00 AM (midnight) on this date
-  // FOR TESTING: set to 1 minute from now
-  const BIRTHDAY_DATE = new Date(Date.now() + 60000).toISOString().split('T')[0];
+  // CHANGE THIS TO ACTUAL BIRTHDAY DATE
+  const BIRTHDAY_DATE = "2026-06-14"; // Replace with Ankita's actual birthday
 
   const HER_NAME = "Ankita";
 
@@ -2083,8 +2083,8 @@
   /* =============== you can stop editing here =============== */
 
   // countdown logic - show countdown until birthday, then show main page
-  // FOR TESTING: 1 minute from page load
-  const targetDate = Date.now() + 60000;
+  // PRODUCTION: Use actual birthday date
+  const targetDate = new Date(BIRTHDAY_DATE + "T00:00:00").getTime();
   const countdownPage = document.getElementById("countdownPage");
   const mainContent = document.querySelector("body");
   
